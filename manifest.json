@@ -18,6 +18,7 @@
     },
     "permissions": [
         "tabs",
+        "storage",
         "webRequest",
         "https://www.facebook.com/connect/blank.html*",
         "http://images.gotinder.com/",

@@ -6,11 +6,24 @@
 
         this.singleAuth = function () {
             if (!authPromise) {
-                authPromise = authorize().then(credentials).then(connect);
+                authPromise = cache().catch(authorize).then(credentials).then(connect);
             }
             return authPromise;
         };
     });
+
+    function cache() {
+        return new Promise(function (resolve, reject) {
+            chrome.storage.local.get('token', function (items) {
+                if (items.token && items.token.expiresAt > Date.now()) {
+                    resolve(items.token.token);
+                } else {
+                    chrome.storage.local.remove('token');
+                    reject();
+                }
+            });
+        });
+    }
 
     function authorize() {
         return new Promise(function (resolve, reject) {
@@ -25,7 +38,15 @@
                     return;
                 }
 
-                resolve(message.token, message.expires);
+                // Cache token.
+                chrome.storage.local.set({
+                    token: {
+                        expiresAt: message.expires * 1000 + Date.now(),
+                        token: message.token
+                    }
+                });
+
+                resolve(message.token);
             });
         });
     }
