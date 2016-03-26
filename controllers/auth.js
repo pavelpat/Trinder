@@ -1,14 +1,12 @@
 (function (chrome, $, App, Client) {
     'use strict';
 
-    var authExtensionId = 'ifddcimdicemgejolganfeihfikgnnjn';
-
     App.controller('AuthController', function ($rootScope) {
         $rootScope.auth = null;
         $rootScope.client = null;
         $rootScope.person = null;
         $rootScope.clientReady = new Promise(function (resolve, reject) {
-            authorize(authExtensionId).then(credentials).then(connect).then(function (cp) {
+            authorize().then(credentials).then(connect).then(function (cp) {
                 $rootScope.auth = true;
                 $rootScope.client = cp.client;
                 $rootScope.person = cp.person;
@@ -22,13 +20,19 @@
         });
     });
 
-    function authorize(id) {
+    function authorize() {
         return new Promise(function (resolve, reject) {
             // Send request to TrinderAuth.
-            chrome.runtime.sendMessage(id, {});
+            chrome.runtime.sendMessage({
+                type: 'request'
+            });
 
             // Wait response from TrinderAuth.
-            chrome.runtime.onMessageExternal.addListener(function (message) {
+            chrome.runtime.onMessage.addListener(function (message) {
+                if (message.type != 'response') {
+                    return;
+                }
+                
                 resolve(message.token, message.expires);
             });
         });

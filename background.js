@@ -4,29 +4,33 @@ var oauthUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&
     oauthWildcard = 'https://www.facebook.com/dialog/oauth*',
     blankWildcard = 'https://www.facebook.com/connect/blank.html*';
 
-chrome.runtime.onMessage.addListener(
-    function(request, sender) {
-        function extractCloseResponse(info){
-            // Send token back.
-            chrome.runtime.sendMessage(sender.id, extractToken(info.redirectUrl));
-
-            // Close opened tabs.
-            closeAuthTabs(oauthWildcard);
-            closeAuthTabs(blankWildcard);
-
-            // Remove self.
-            chrome.webRequest.onBeforeRedirect.removeListener(extractCloseResponse);
-        }
-
-        // Listen for oauth redirects.
-        chrome.webRequest.onBeforeRedirect.addListener(extractCloseResponse, {
-            urls: [oauthWildcard]
-        }, ['responseHeaders']);
-
-        // Begin oauth process.
-        chrome.tabs.create({url: oauthUrl});
+chrome.runtime.onMessage.addListener(function(message) {
+    if (message.type != 'request') {
+        return;
     }
-);
+
+    function extractCloseResponse(info){
+        // Send token back.
+        var message = extractToken(info.redirectUrl);
+        message.type = 'response';
+        chrome.runtime.sendMessage(message);
+
+        // Close opened tabs.
+        closeAuthTabs(oauthWildcard);
+        closeAuthTabs(blankWildcard);
+
+        // Remove self.
+        chrome.webRequest.onBeforeRedirect.removeListener(extractCloseResponse);
+    }
+
+    // Listen for oauth redirects.
+    chrome.webRequest.onBeforeRedirect.addListener(extractCloseResponse, {
+        urls: [oauthWildcard]
+    }, ['responseHeaders']);
+
+    // Begin oauth process.
+    chrome.tabs.create({url: oauthUrl});
+});
 
 function extractToken(url) {
     var regexp = new RegExp('access_token=(.*)&expires_in=(.*)'),

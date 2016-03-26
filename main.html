@@ -10,16 +10,13 @@
     <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="client.js"></script>
     <script src="application.js"></script>
-    <script src="services/importblob.js"></script>
-    <script src="directives/importsrc.js"></script>
     <script src="controllers/auth.js"></script>
-    <script src="controllers/gallery.js"></script>
     <script src="controllers/people.js"></script>
     <script src="controllers/matches.js"></script>
 </head>
 <body ng-app="trinder" ng-controller="AuthController">
 <div class="preloader" ng-show="!client"></div>
-<div class="container" ng-controller="GalleryController">
+<div class="container">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -33,11 +30,6 @@
             </div>
         </div>
     </nav>
-    <div class="gallery">
-        <div class="gallery__wrap">
-            <img ="">
-        </div>
-    </div>
     <div ui-view></div>
 </div>
 </body>

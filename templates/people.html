@@ -5,10 +5,9 @@
         <div class="people__person-name">{{ person.name }}</div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">
-            <img class="people__person-photo"
+            <img class="people__person-photo" ng-src="photo[172].url"
                  ng-click="gallery.open(person.photos, $index)"
-                 ng-if="photo[172].url" ng-repeat="photo in person.photos"
-                 import-src="{{ photo[172].url }}">
+                 ng-if="photo[172].url" ng-repeat="photo in person.photos">
         </div>
         <button class="btn btn-danger" ng-click="pass(person)">Dislike</button>
         <button class="btn btn-primary" ng-click="like(person)">Like</button>
