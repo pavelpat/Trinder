@@ -174,6 +174,7 @@ Client = (function ($) {
                 })
             }).success(function (r) {
                 resolve({
+                    lastActivity: r.last_activity_date,
                     matches: r.matches.map(function(match){
                         return {
                             id: match._id,
@@ -202,10 +203,10 @@ Client = (function ($) {
                                     to: message.to,
                                     from: message.from,
                                     message: message.message,
-                                    sent: new Date(message.sent_date)
+                                    sent: message.sent_date
                                 };
                             }),
-                            lastActivity: new Date(match.last_activity_date)
+                            lastActivity: match.last_activity_date
                         };
                     })
                 });
