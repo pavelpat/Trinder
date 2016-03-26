@@ -1,5 +1,8 @@
 <h1>Matches</h1>
 <div class="preloader" ng-show="loading"></div>
+<ng-photoswipe open="gallery.shown" on-close="gallery.close()"
+    slides="gallery.slides" options="gallery.options"
+    template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
 <div class="matches">
     <ul class="matches__list">
         <li class="matches__list-item" ng-repeat="match in matches" ng-click="dialog(match)"

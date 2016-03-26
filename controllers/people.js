@@ -2,6 +2,29 @@
     'use strict';
 
     App.controller('PeopleController', function ($scope) {
+        $scope.gallery = {
+            shown: false,
+            options: {
+                history: false,
+                shareEl: false
+            },
+            slides: [],
+            open: function (photos, index) {
+                $scope.gallery.shown = true;
+                $scope.gallery.options.index = index;
+                $scope.gallery.slides = photos.map(function(photo) {
+                    return {
+                        src: photo.url,
+                        w: 2048,
+                        h: 2048
+                    }
+                });
+            },
+            close: function () {
+                $scope.gallery.shown = false;
+            }
+        };
+
         $scope.people = [];
         $scope.loading = false;
 

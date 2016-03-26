@@ -1,7 +1,7 @@
 App = (function (window, angular) {
     'use strict';
 
-    var app = angular.module('trinder', ['ui.router']);
+    var app = angular.module('trinder', ['ui.router', 'ngPhotoswipe']);
 
     app.config(function ($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/people');

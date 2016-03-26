@@ -20,6 +20,7 @@
   "dependencies": {
     "angular": "^1.5.0",
     "angular-ui-router": "^0.2.18",
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "ng-photoswipe": "^0.0.9"
   }
 }
