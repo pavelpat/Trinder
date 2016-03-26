@@ -19,7 +19,10 @@
     "permissions": [
         "tabs",
         "webRequest",
-        "https://www.facebook.com/connect/blank.html*"
+        "https://www.facebook.com/connect/blank.html*",
+        "http://images.gotinder.com/",
+        "https://api.gotinder.com/",
+        "https://graph.facebook.com/"
     ],
     "background": {
         "scripts": [

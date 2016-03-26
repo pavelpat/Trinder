@@ -4,12 +4,11 @@
     <ul class="matches__list">
         <li class="matches__list-item" ng-repeat="match in matches" ng-click="dialog(match)"
             ng-class="match == active ? 'matches__list-item__active' : ''">
-            <img class="matches__list-item-photo"
-                 ng-src="match.person.photos[0][84].url"
+            <img class="matches__list-item-photo"  src="{{ match.person.photos[0][84].url }}"
                  ng-click="gallery.open(match.person.photos, 0)">
             <div class="matches__list-item-name" title="{{ match.person.name }}">{{ match.person.name }}</div>
             <div class="matches__list-item-bio" title="{{ match.person.bio }}">{{ match.person.bio }}</div>
-            <img class="matches__list-item-photo-small" ng-src="photo[84].url"
+            <img class="matches__list-item-photo-small" src="{{ photo[84].url }}"
                  ng-repeat="photo in match.person.photos" ng-show="!$first"
                  ng-click="gallery.open(match.person.photos, $index)">
         </li>

@@ -177,7 +177,7 @@ Client = (function ($) {
                     matches: r.matches.map(function(match){
                         return {
                             id: match._id,
-                            person: {
+                            person: match.person ? {
                                 id: match.person._id,
                                 name: match.person.name,
                                 bio: match.person.bio,
@@ -196,7 +196,7 @@ Client = (function ($) {
 
                                     return photos;
                                 })
-                            },
+                            } : null,
                             messages: match.messages.map(function (message) {
                                 return {
                                     to: message.to,

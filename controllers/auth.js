@@ -32,7 +32,7 @@
                 if (message.type != 'response') {
                     return;
                 }
-                
+
                 resolve(message.token, message.expires);
             });
         });
