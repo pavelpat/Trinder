@@ -1,0 +1,17 @@
+<h1>People</h1>
+<div class="preloader" ng-show="loading"></div>
+<div class="people">
+    <div ng-repeat="person in people" class="people__person">
+        <div class="people__person-name">{{ person.name }}</div>
+        <div class="people__person-bio">{{ person.bio }}</div>
+        <div class="people__person-photo-wrap">
+            <img class="people__person-photo"
+                 ng-click="gallery.open(person.photos, $index)"
+                 ng-if="photo[172].url" ng-repeat="photo in person.photos"
+                 import-src="{{ photo[172].url }}">
+        </div>
+        <button class="btn btn-danger" ng-click="pass(person)">Dislike</button>
+        <button class="btn btn-primary" ng-click="like(person)">Like</button>
+    </div>
+    <button class="btn btn-default" ng-click="refresh()">Refresh</button>
+</div>

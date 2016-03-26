@@ -1,0 +1,25 @@
+{
+  "name": "Trinder",
+  "authors": [
+    "Pavel Patrin <pavelpatrin@gmail.com>"
+  ],
+  "description": "Chrome client for Tinder",
+  "main": "",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-ui-router": "^0.2.18",
+    "bootstrap": "^3.3.6"
+  }
+}

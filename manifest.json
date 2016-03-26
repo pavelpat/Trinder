@@ -1,0 +1,30 @@
+{
+    "name": "Trinder",
+    "version": "0.0.2",
+    "description": "Chrome client for Tinder",
+    "icons": {
+        "16": "images/16x16.png",
+        "48": "images/48x48.png",
+        "64": "images/64x64.png",
+        "128": "images/128x128.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "images/16x16.png",
+            "48": "images/48x48.png",
+            "64": "images/64x64.png",
+            "128": "images/128x128.png"
+        }
+    },
+    "permissions": [
+        "tabs",
+        "webRequest",
+        "https://www.facebook.com/connect/blank.html*"
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "manifest_version": 2
+}

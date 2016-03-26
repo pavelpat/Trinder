@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Trinder &mdash; Chrome client for Tinder</title>
+    <link rel="stylesheet" media="all" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" media="all" href="main.css">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="client.js"></script>
+    <script src="application.js"></script>
+    <script src="services/importblob.js"></script>
+    <script src="directives/importsrc.js"></script>
+    <script src="controllers/auth.js"></script>
+    <script src="controllers/gallery.js"></script>
+    <script src="controllers/people.js"></script>
+    <script src="controllers/matches.js"></script>
+</head>
+<body ng-app="trinder" ng-controller="AuthController">
+<div class="preloader" ng-show="!client"></div>
+<div class="container" ng-controller="GalleryController">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">Trinder &mdash; Chrome client for Tinder</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" ui-sref="people">People</a></li>
+                    <li><a href="#" ui-sref="matches">Matches</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="gallery">
+        <div class="gallery__wrap">
+            <img ="">
+        </div>
+    </div>
+    <div ui-view></div>
+</div>
+</body>
+</html>

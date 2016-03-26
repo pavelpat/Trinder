@@ -1,0 +1,40 @@
+<h1>Matches</h1>
+<div class="preloader" ng-show="loading"></div>
+<div class="matches">
+    <ul class="matches__list">
+        <li class="matches__list-item" ng-repeat="match in matches" ng-click="dialog(match)"
+            ng-class="match == active ? 'matches__list-item__active' : ''">
+            <img class="matches__list-item-photo"
+                 ng-click="gallery.open(match.person.photos, 0)"
+                 import-src="{{ match.person.photos[0][84].url }}">
+            <div class="matches__list-item-name" title="{{ match.person.name }}">{{ match.person.name }}</div>
+            <div class="matches__list-item-bio" title="{{ match.person.bio }}">{{ match.person.bio }}</div>
+            <img class="matches__list-item-photo-small"
+                 ng-repeat="photo in match.person.photos" ng-show="!$first"
+                 ng-click="gallery.open(match.person.photos, $index)"
+                 import-src="{{ photo[84].url }}">
+        </li>
+    </ul>
+    <div class="message" ng-if="active">
+        <textarea class="form-control message__message" ng-model="message"></textarea>
+        <button class="btn btn-primary message__send"
+                ng-click="send(active, message); message = ''" ng-disabled="!message">
+            Send
+        </button>
+    </div>
+    <ul class="matches__messages">
+        <li class="matches__messages-item" ng-repeat="message in active.messages" ng-if="active">
+            <div class="matches__messages-item-left">
+                <div class="matches__messages-item-left-from">
+                    {{ message.from == active.person.id ? active.person.name : person.name }}
+                </div>
+                <div class="matches__messages-item-left-date">
+                    {{ message.sent.toLocaleString() }}
+                </div>
+            </div>
+            <div class="matches__messages-item-message">
+                {{ message.message }}
+            </div>
+        </li>
+    </ul>
+</div>

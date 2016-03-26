@@ -1,0 +1,167 @@
+html, body, html.fancybox-lock, html.fancybox-lock, .fancybox-overlay {
+    overflow: auto !important;
+}
+
+.container {
+    padding: 10px 0;
+}
+
+.preloader {
+    background: 50% 50% no-repeat url('images/ajax-loader.gif') rgba(127, 127, 127, 0.5);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.people {
+
+}
+
+.people__person {
+    padding: 10px 0;
+    margin: 10px 0;
+    border-bottom: 1px solid rgba(200, 200, 200, 0.5);
+}
+
+.people__person-name {
+    font-size: 140%;
+}
+
+.people__person-bio {
+    font-style: italic;
+}
+
+.people__person-photo-wrap {
+    margin: 0 -10px;
+}
+
+.people__person-photo {
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.matches {
+
+}
+
+.matches__list {
+    float: left;
+    width: 350px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.matches__list-item {
+    box-sizing: border-box;
+    height: 100px;
+    padding: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(200, 200, 200, 0.1);
+    border-radius: 5px;
+}
+
+.matches__list-item__active {
+    background: rgba(220, 220, 220, 0.1)
+}
+
+.matches__list-item:hover {
+    background: rgba(200, 200, 200, 0.1);
+}
+
+.matches__list-item-name {
+    font-size: 140%;
+    margin-left: 108px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.matches__list-item-bio {
+    color: #ccc;
+    font-style: italic;
+    margin-left: 108px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.matches__list-item-photo {
+    border-radius: 5px;
+    overflow: hidden;
+    float: left;
+    position: relative;
+    margin: 4px 20px 4px 4px;
+}
+
+.matches__list-item-photo-small {
+    border-radius: 3px;
+    float: left;
+    width: 32px;
+    height: 32px;
+    margin: 2px;
+}
+
+.matches__messages {
+    margin-left: 370px;
+    padding: 0;
+}
+
+.matches__messages-item {
+    list-style: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    min-height: 60px;
+}
+
+.matches__messages-item:nth-child(2n) {
+    background: rgba(220, 220, 220, 0.1)
+}
+
+.matches__messages-item:nth-child(2n + 1) {
+    background: rgba(240, 240, 240, 0.1)
+}
+
+.matches__messages-item-left {
+    float: left;
+    width: 160px;
+}
+
+.matches__messages-item-left-from {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.matches__messages-item-left-date {
+    color: #ccc;
+    font-style: italic;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.matches__messages-item-message {
+    display: block;
+    margin-left: 180px;
+}
+
+.message {
+    margin-left: 370px;
+}
+
+.message__message {
+    width: 100%;
+    margin: 10px 0 5px;
+    height: 100px !important;
+}
+
+.message__send {
+
+}
