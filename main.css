@@ -2,8 +2,8 @@ html, body, html.fancybox-lock, html.fancybox-lock, .fancybox-overlay {
     overflow: auto !important;
 }
 
-.container {
-    padding: 10px 0;
+body {
+    padding-top: 70px;
 }
 
 .preloader {
