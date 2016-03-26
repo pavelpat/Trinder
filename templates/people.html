@@ -1,5 +1,5 @@
 <h1>People</h1>
-<div class="preloader" ng-show="loading"></div>
+<div class="preloader" ng-show="!client || loading"></div>
 <ng-photoswipe open="gallery.shown" on-close="gallery.close()"
     slides="gallery.slides" options="gallery.options"
     template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>

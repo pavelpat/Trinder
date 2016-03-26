@@ -1,30 +1,45 @@
-(function (Main) {
+(function (App) {
     'use strict';
 
-    App.controller('PeopleController', function ($scope) {
+    App.controller('PeopleController', function ($scope, Auth) {
+        // Auth section.
+        $scope.client = null;
+        $scope.person = null;
+
+        Auth.singleAuth().then(function (cp) {
+            $scope.client = cp.client;
+            $scope.person = cp.person;
+            $scope.refresh();
+            $scope.$apply();
+        });
+
+        // Gallery section.
         $scope.gallery = {
             shown: false,
             options: {
                 history: false,
                 shareEl: false
             },
-            slides: [],
-            open: function (photos, index) {
-                $scope.gallery.shown = true;
-                $scope.gallery.options.index = index;
-                $scope.gallery.slides = photos.map(function(photo) {
-                    return {
-                        src: photo.url,
-                        w: 2048,
-                        h: 2048
-                    }
-                });
-            },
-            close: function () {
-                $scope.gallery.shown = false;
-            }
+            slides: []
         };
 
+        $scope.gallery.open = function (photos, index) {
+            $scope.gallery.shown = true;
+            $scope.gallery.options.index = index;
+            $scope.gallery.slides = photos.map(function(photo) {
+                return {
+                    src: photo.url,
+                    w: 2048,
+                    h: 2048
+                }
+            });
+        };
+
+        $scope.gallery.close = function () {
+            $scope.gallery.shown = false;
+        };
+
+        // Main section.
         $scope.people = [];
         $scope.loading = false;
 
@@ -70,10 +85,5 @@
                 $scope.$apply();
             });
         };
-
-        $scope.clientReady.then(function () {
-            $scope.refresh();
-            $scope.$apply();
-        });
     });
 })(App);

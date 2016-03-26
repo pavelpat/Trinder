@@ -1,33 +1,25 @@
 (function (chrome, $, App, Client) {
     'use strict';
 
-    App.controller('AuthController', function ($rootScope) {
-        $rootScope.auth = null;
-        $rootScope.client = null;
-        $rootScope.person = null;
-        $rootScope.clientReady = new Promise(function (resolve, reject) {
-            authorize().then(credentials).then(connect).then(function (cp) {
-                $rootScope.auth = true;
-                $rootScope.client = cp.client;
-                $rootScope.person = cp.person;
-                $rootScope.$apply();
-                resolve();
-            }, function (e) {
-                $rootScope.auth = false;
-                $rootScope.$apply();
-                reject('Connection error: ' + e);
-            });
-        });
+    App.service('Auth', function(){
+        var authPromise = null;
+
+        this.singleAuth = function () {
+            if (!authPromise) {
+                authPromise = authorize().then(credentials).then(connect);
+            }
+            return authPromise;
+        };
     });
 
     function authorize() {
         return new Promise(function (resolve, reject) {
-            // Send request to TrinderAuth.
+            // Send request to background script.
             chrome.runtime.sendMessage({
                 type: 'request'
             });
 
-            // Wait response from TrinderAuth.
+            // Wait response from background script.
             chrome.runtime.onMessage.addListener(function (message) {
                 if (message.type != 'response') {
                     return;
