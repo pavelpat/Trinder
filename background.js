@@ -2,7 +2,8 @@
 
 var oauthUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&redirect_uri=https://www.facebook.com/connect/login_success.html&scope=basic_info,email,public_profile,user_about_me,user_activities,user_birthday,user_education_history,user_friends,user_interests,user_likes,user_location,user_photos,user_relationship_details&response_type=token',
     oauthWildcard = 'https://www.facebook.com/dialog/oauth*',
-    blankWildcard = 'https://www.facebook.com/connect/blank.html*';
+    blankWildcard = 'https://www.facebook.com/connect/blank.html*',
+    successWildcard = 'https://www.facebook.com/connect/login_success.html*';
 
 chrome.runtime.onMessage.addListener(acceptRequest);
 
@@ -11,9 +12,9 @@ function acceptRequest(message) {
         return;
     }
 
-    // Listen for oauth redirects.
-    chrome.webRequest.onBeforeRedirect.addListener(sendResponse, {
-        urls: [oauthWildcard]
+    // Listen for oauth urls.
+    chrome.webRequest.onHeadersReceived.addListener(sendResponse, {
+        urls: [successWildcard]
     }, ['responseHeaders']);
 
     // Begin oauth process.
@@ -22,13 +23,14 @@ function acceptRequest(message) {
 
 function sendResponse(info) {
     // Send token back.
-    var message = extractToken(info.redirectUrl);
+    var message = extractToken(info.url);
     message.type = 'response';
     chrome.runtime.sendMessage(message);
 
     // Close opened tabs.
     closeAuthTabs(oauthWildcard);
     closeAuthTabs(blankWildcard);
+    closeAuthTabs(successWildcard);
 
     // Remove self.
     chrome.webRequest.onBeforeRedirect.removeListener(sendResponse);

@@ -1,6 +1,6 @@
 {
     "name": "Trinder",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Chrome client for Tinder",
     "icons": {
         "16": "images/16x16.png",
@@ -20,10 +20,9 @@
         "tabs",
         "storage",
         "webRequest",
-        "https://www.facebook.com/connect/blank.html*",
-        "http://images.gotinder.com/",
         "https://api.gotinder.com/",
-        "https://graph.facebook.com/"
+        "https://graph.facebook.com/",
+        "https://www.facebook.com/connect/login_success.html*"
     ],
     "background": {
         "scripts": [
