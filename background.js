@@ -4,33 +4,35 @@ var oauthUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&
     oauthWildcard = 'https://www.facebook.com/dialog/oauth*',
     blankWildcard = 'https://www.facebook.com/connect/blank.html*';
 
-chrome.runtime.onMessage.addListener(function(message) {
+chrome.runtime.onMessage.addListener(acceptRequest);
+
+function acceptRequest(message) {
     if (message.type != 'request') {
         return;
     }
 
-    function extractCloseResponse(info){
-        // Send token back.
-        var message = extractToken(info.redirectUrl);
-        message.type = 'response';
-        chrome.runtime.sendMessage(message);
-
-        // Close opened tabs.
-        closeAuthTabs(oauthWildcard);
-        closeAuthTabs(blankWildcard);
-
-        // Remove self.
-        chrome.webRequest.onBeforeRedirect.removeListener(extractCloseResponse);
-    }
-
     // Listen for oauth redirects.
-    chrome.webRequest.onBeforeRedirect.addListener(extractCloseResponse, {
+    chrome.webRequest.onBeforeRedirect.addListener(sendResponse, {
         urls: [oauthWildcard]
     }, ['responseHeaders']);
 
     // Begin oauth process.
     chrome.tabs.create({url: oauthUrl});
-});
+}
+
+function sendResponse(info) {
+    // Send token back.
+    var message = extractToken(info.redirectUrl);
+    message.type = 'response';
+    chrome.runtime.sendMessage(message);
+
+    // Close opened tabs.
+    closeAuthTabs(oauthWildcard);
+    closeAuthTabs(blankWildcard);
+
+    // Remove self.
+    chrome.webRequest.onBeforeRedirect.removeListener(sendResponse);
+}
 
 function extractToken(url) {
     var regexp = new RegExp('access_token=(.*)&expires_in=(.*)'),
@@ -44,7 +46,7 @@ function extractToken(url) {
 function closeAuthTabs(url) {
     chrome.tabs.query({
         url: url
-    }, function(tabs){
+    }, function (tabs) {
         tabs.forEach(function (tab) {
             chrome.tabs.remove(tab.id);
         });
@@ -52,7 +54,7 @@ function closeAuthTabs(url) {
 }
 
 // Open main app page.
-chrome.browserAction.onClicked.addListener(function (activeTab) {
+chrome.browserAction.onClicked.addListener(function () {
     chrome.tabs.create({
         url: 'main.html'
     });
