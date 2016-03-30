@@ -81,12 +81,12 @@ body {
 }
 
 .matches__list-item__active {
-    background: #337ab7;
+    background: rgba(51, 122, 183, 0.5);
     color: white;
 }
 
 .matches__list-item:hover {
-    background: #236aa7;
+    background: rgba(51, 122, 183, 0.6);
     color: white;
 }
 
