@@ -1,9 +1,8 @@
-<h1>Matches</h1>
 <div class="preloader" ng-show="!client || loading"></div>
 <ng-photoswipe open="gallery.shown" on-close="gallery.close()"
     slides="gallery.slides" options="gallery.options"
     template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
-<div class="matches">
+<div class="layout__flex matches">
     <ul class="matches__list">
         <li class="matches__list-item" ng-repeat="match in matches" ng-click="dialog(match)"
             ng-class="match == active ? 'matches__list-item__active' : ''">
@@ -16,26 +15,28 @@
                  ng-click="gallery.open(match.person.photos, $index)">
         </li>
     </ul>
-    <div class="message" ng-if="active">
-        <textarea class="form-control message__message" ng-model="message"></textarea>
-        <button class="btn btn-primary message__send"
-                ng-click="send(active, message); message = ''" ng-disabled="!message">
-            Send
-        </button>
+    <div class="layout__block matches__chat" ng-if="active">
+        <div class="message">
+            <textarea class="form-control message__message" ng-model="message"></textarea>
+            <button class="btn btn-primary message__send"
+                    ng-click="send(active, message); message = ''" ng-disabled="!message">
+                Send
+            </button>
+        </div>
+        <ul class="matches__messages">
+            <li class="matches__messages-item" ng-repeat="message in active.messages" ng-if="active">
+                <div class="matches__messages-item-left">
+                    <div class="matches__messages-item-left-from">
+                        {{ message.from == active.person.id ? active.person.name : person.name }}
+                    </div>
+                    <div class="matches__messages-item-left-date">
+                        {{ message.sent.toLocaleString() }}
+                    </div>
+                </div>
+                <div class="matches__messages-item-message">
+                    {{ message.message }}
+                </div>
+            </li>
+        </ul>
     </div>
-    <ul class="matches__messages">
-        <li class="matches__messages-item" ng-repeat="message in active.messages" ng-if="active">
-            <div class="matches__messages-item-left">
-                <div class="matches__messages-item-left-from">
-                    {{ message.from == active.person.id ? active.person.name : person.name }}
-                </div>
-                <div class="matches__messages-item-left-date">
-                    {{ message.sent.toLocaleString() }}
-                </div>
-            </div>
-            <div class="matches__messages-item-message">
-                {{ message.message }}
-            </div>
-        </li>
-    </ul>
 </div>

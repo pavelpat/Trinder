@@ -6,6 +6,23 @@ body {
     padding-top: 70px;
 }
 
+.layout {
+    background: #f1f1f1;
+}
+
+.layout__flex {
+    display: flex;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.layout__block {
+    background: #ffffff;
+    box-shadow: 0 0 5px 0 #CCC;
+    padding: 20px;
+    margin: 20px 0;
+}
+
 .preloader {
     background: 50% 50% no-repeat url('images/ajax-loader.gif') rgba(127, 127, 127, 0.5);
     position: fixed;
@@ -21,9 +38,7 @@ body {
 }
 
 .people__person {
-    padding: 10px 0;
-    margin: 10px 0;
-    border-bottom: 1px solid rgba(200, 200, 200, 0.5);
+    position: relative;
 }
 
 .people__person-name {
@@ -48,7 +63,6 @@ body {
 }
 
 .matches__list {
-    float: left;
     width: 350px;
     list-style: none;
     padding: 0;
@@ -63,15 +77,17 @@ body {
     position: relative;
     overflow: hidden;
     border-bottom: 1px solid rgba(200, 200, 200, 0.1);
-    border-radius: 5px;
+    border-radius: 5px 0 0 5px;
 }
 
 .matches__list-item__active {
-    background: rgba(220, 220, 220, 0.1)
+    background: #337ab7;
+    color: white;
 }
 
 .matches__list-item:hover {
-    background: rgba(200, 200, 200, 0.1);
+    background: #236aa7;
+    color: white;
 }
 
 .matches__list-item-name {
@@ -107,8 +123,12 @@ body {
     margin: 2px;
 }
 
+.matches__chat {
+    width: 100%;
+    margin: 0;
+}
+
 .matches__messages {
-    margin-left: 370px;
     padding: 0;
 }
 
@@ -153,7 +173,6 @@ body {
 }
 
 .message {
-    margin-left: 370px;
 }
 
 .message__message {
