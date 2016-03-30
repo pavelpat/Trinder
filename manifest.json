@@ -1,6 +1,6 @@
 {
     "name": "Trinder",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Chrome client for Tinder",
     "icons": {
         "16": "images/16x16.png",
