@@ -10,6 +10,10 @@ body {
     background: #f1f1f1;
 }
 
+.layout .container {
+    width: 1010px;
+}
+
 .layout__flex {
     display: flex;
     align-items: stretch;
@@ -21,6 +25,10 @@ body {
     box-shadow: 0 0 5px 0 #CCC;
     padding: 20px;
     margin: 20px 0;
+}
+
+.layout__menus .navbar-right {
+    margin: 0;
 }
 
 .preloader {

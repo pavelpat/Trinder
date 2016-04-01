@@ -6,6 +6,7 @@
     <link rel="stylesheet" media="all" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" media="all" href="bower_components/photoswipe/dist/photoswipe.css">
     <link rel="stylesheet" media="all" href="bower_components/photoswipe/dist/default-skin/default-skin.css">
+    <link rel="stylesheet" media="all" href="bower_components/leaflet/dist/leaflet.css">
     <link rel="stylesheet" media="all" href="main.css">
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.min.js"></script>
@@ -13,28 +14,36 @@
     <script src="bower_components/photoswipe/dist/photoswipe.min.js"></script>
     <script src="bower_components/photoswipe/dist/photoswipe-ui-default.min.js"></script>
     <script src="bower_components/ng-photoswipe/angular-photoswipe.min.js"></script>
+    <script src="bower_components/leaflet/dist/leaflet.js"></script>
+    <script src="bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.min.js"></script>
     <script src="application.js"></script>
     <script src="services/client.js"></script>
     <script src="services/auth.js"></script>
     <script src="controllers/people.js"></script>
     <script src="controllers/matches.js"></script>
+    <script src="controllers/settings.js"></script>
 </head>
 <body ng-app="trinder" class="layout">
 <div class="container">
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="layout__menus navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand">Trinder &mdash; Chrome client for Tinder</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#" ui-sref="people">People</a></li>
-                    <li><a href="#" ui-sref="matches">Matches</a></li>
+                    <li ui-sref-active="active" ng-repeat="link in [
+                        ['people', 'People'],
+                        ['matches', 'Matches'],
+                        ['settings', 'Settings']
+                    ]">
+                        <a href="#" ui-sref="{{ link[0] }}">{{ link[1] }}</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div ui-view></div>
+    <ui-view></ui-view>
 </div>
 </body>
 </html>

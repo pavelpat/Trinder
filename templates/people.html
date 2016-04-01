@@ -3,13 +3,15 @@
     slides="gallery.slides" options="gallery.options"
     template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
 <div class="people">
-    <div ng-repeat="person in people" class="people__person layout__block">
+    <div class="people__person layout__block"
+        ng-repeat="person in people">
         <div class="people__person-name">{{ person.name }}</div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">
             <img class="people__person-photo" src="{{ photo[172].url }}"
+                 ng-repeat="photo in person.photos | limitTo : 5"
                  ng-click="gallery.open(person.photos, $index)"
-                 ng-if="photo[172].url" ng-repeat="photo in person.photos">
+                 ng-if="photo[172].url" >
         </div>
         <button class="btn btn-danger" ng-click="pass(person)">Dislike</button>
         <button class="btn btn-primary" ng-click="like(person)">Like</button>

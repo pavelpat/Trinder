@@ -1,7 +1,11 @@
 App = (function (window, angular) {
     'use strict';
 
-    var app = angular.module('trinder', ['ui.router', 'ngPhotoswipe']);
+    var app = angular.module('trinder', [
+        'ui.router',
+        'ngPhotoswipe',
+        'leaflet-directive'
+    ]);
 
     app.config(function ($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/people');
@@ -16,6 +20,12 @@ App = (function (window, angular) {
             reload: false,
             controller: 'MatchesController',
             templateUrl: 'templates/matches.html'
+        });
+        $stateProvider.state('settings', {
+            url: '/settings',
+            reload: false,
+            controller: 'SettingsController',
+            templateUrl: 'templates/settings.html'
         });
     });
     

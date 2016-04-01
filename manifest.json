@@ -22,7 +22,8 @@
         "webRequest",
         "https://api.gotinder.com/",
         "https://graph.facebook.com/",
-        "https://www.facebook.com/connect/login_success.html*"
+        "https://www.facebook.com/connect/login_success.html*",
+        "https://*.tile.openstreetmap.org/*"
     ],
     "background": {
         "scripts": [
