@@ -119,6 +119,13 @@
             }
 
             _get(path) {
+                var headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (this.authToken) {
+                    headers['X-Auth-Token'] = this.authToken;
+                }
+
                 return new Promise((resolve, reject) => {
                     $.ajax({
                         url: this.apiUrl + path,
@@ -136,14 +143,14 @@
             }
 
             _post(path, data) {
-                return new Promise((resolve, reject) => {
-                    var headers = {
-                        'Content-Type': 'application/json',
-                    };
-                    if (this.authToken) {
-                        headers['X-Auth-Token'] = this.authToken;
-                    }
+                var headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (this.authToken) {
+                    headers['X-Auth-Token'] = this.authToken;
+                }
 
+                return new Promise((resolve, reject) => {
                     $.ajax({
                         url: this.apiUrl + path,
                         type: 'post',
