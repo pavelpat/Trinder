@@ -1,7 +1,10 @@
-(function (chrome, App) {
+(function (App) {
     'use strict';
 
-    App.controller('MatchesController', function ($scope, Auth) {
+    App.controller('MatchesController', function ($scope, Auth, Store) {
+        // Store section.
+        var store = new Store('Matches');
+
         // Auth section.
         $scope.client = null;
         $scope.person = null;
@@ -78,13 +81,11 @@
         };
 
         function cached() {
-            return new Promise(function (resolve) {
-                chrome.storage.local.get('updates', function (items) {
-                    resolve(items.updates ? resolve(items.updates) : {
-                        lastActivity: null,
-                        matches: []
-                    });
-                });
+            return store.get('updates').then((updates) => {
+                return updates ? resolve(updates) : {
+                    lastActivity: null,
+                    matches: []
+                };
             });
         }
 
@@ -168,11 +169,8 @@
         }
 
         function cache(updates) {
-            chrome.storage.local.set({
-                updates: updates
-            });
-
+            store.set('updates', updates);
             return updates;
         }
     })
-})(chrome, App);
+})(App);
