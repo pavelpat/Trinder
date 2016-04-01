@@ -23,9 +23,10 @@ function acceptRequest(message) {
 
 function sendResponse(info) {
     // Send token back.
-    var message = extractToken(info.url);
-    message.type = 'response';
-    chrome.runtime.sendMessage(message);
+    chrome.runtime.sendMessage({
+        type: 'response',
+        data: extractToken(info.url)
+    });
 
     // Close opened tabs.
     closeAuthTabs(oauthWildcard);
