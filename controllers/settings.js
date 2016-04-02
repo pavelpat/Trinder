@@ -1,12 +1,12 @@
-(function (App) {
+((App) => {
     'use strict';
 
-    App.controller('SettingsController', function ($scope, Auth) {
+    App.controller('SettingsController', function ($scope, ReadyClient) {
         // Auth section.
         $scope.client = null;
         $scope.person = null;
 
-        Auth.singleAuth().then(function (cp) {
+        ReadyClient.then((cp) => {
             $scope.client = cp.client;
             $scope.person = cp.person;
             $scope.$apply();
@@ -15,40 +15,51 @@
         // Settings section.
         $scope.settings = [];
 
-        // Leaflet settings.
-        $scope.leaflet = {
-            maxZoom: 14,
-            minZoom: 1,
-            doubleClickZoom: true,
-            scrollWheelZoom: true,
-            attributionControl: true,
-            tileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            tileLayerOptions: {
-                attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            },
-            icon: {
-                url: 'bower_components/leaflet/dist/images/marker-icon.png',
-                retinaUrl: 'bower_components/leaflet/dist/images/marker-icon-2x.png',
-                size: [25, 41],
-                anchor: [12, 40],
-                popup: [0, -40],
-                shadow: {
-                    url: 'bower_components/leaflet/dist/images/marker-shadow.png',
-                    retinaUrl: 'bower_components/leaflet/dist/images/marker-shadow.png',
-                    size: [41, 41],
-                    anchor: [12, 40]
+        // Locations section.
+        $scope.location = {
+            defaults: {
+                minZoom: 2,
+                maxZoom: 12,
+                doubleClickZoom: true,
+                scrollWheelZoom: true,
+                attributionControl: true,
+                tileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                center: {
+                    lat: 0,
+                    lng: 0,
+                    zoom: 2
                 }
             },
-            path: {
-                weight: 10,
-                opacity: 1,
-                color: '#0000ff'
+            position: {},
+            events: {},
+            markers: {
+                location: {
+                    lat: 50.8333,
+                    lng: 4,
+                    focus: false,
+                    message: 'I am here',
+                    draggable: true
+                }
             },
-            center: {
-                lat: 0,
-                lng: 0,
-                zoom: 10
+            paths: {
+                radius: {
+                    type: 'circle',
+                    radius: 1000,
+                    latlngs: {
+                        lat: 50.8333,
+                        lng: 4
+                    }
+                }
             }
         };
+
+        // Drag circle to marker.
+        $scope.$on('leafletDirectiveMarker.move', (event, args) => {
+            var latlng = args.leafletEvent.latlng;
+            $scope.location.paths.radius.latlngs = {
+                lat: latlng.lat,
+                lng: latlng.lng
+            };
+        });
     });
 })(App);

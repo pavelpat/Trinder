@@ -1,12 +1,12 @@
-(function (App) {
+((App) => {
     'use strict';
 
-    App.controller('PeopleController', function ($scope, Auth) {
+    App.controller('PeopleController', function ($scope, ReadyClient) {
         // Auth section.
         $scope.client = null;
         $scope.person = null;
 
-        Auth.singleAuth().then(function (cp) {
+        ReadyClient.then((cp) => {
             $scope.client = cp.client;
             $scope.person = cp.person;
             $scope.refresh();
@@ -23,10 +23,10 @@
             slides: []
         };
 
-        $scope.gallery.open = function (photos, index) {
+        $scope.gallery.open = (photos, index) => {
             $scope.gallery.shown = true;
             $scope.gallery.options.index = index;
-            $scope.gallery.slides = photos.map(function(photo) {
+            $scope.gallery.slides = photos.map((photo) => {
                 return {
                     src: photo.url,
                     w: 2048,
@@ -35,7 +35,7 @@
             });
         };
 
-        $scope.gallery.close = function () {
+        $scope.gallery.close = () => {
             $scope.gallery.shown = false;
         };
 
@@ -43,43 +43,43 @@
         $scope.people = [];
         $scope.loading = false;
 
-        $scope.like = function(person) {
+        $scope.like = (person) => {
             $scope.loading = true;
-            $scope.client.like(person.id).then(function () {
+            $scope.client.like(person.id).then(() => {
                 var index = $scope.people.indexOf(person);
                 if (index > -1) {
                     $scope.people.splice(index, 1);
                 }
                 $scope.loading = false;
                 $scope.$apply();
-            }, function () {
+            }, () => {
                 $scope.loading = false;
                 $scope.$apply();
             })
         };
 
-        $scope.pass = function (person) {
+        $scope.pass = (person) => {
             $scope.loading = true;
-            $scope.client.pass(person.id).then(function () {
+            $scope.client.pass(person.id).then(() => {
                 var index = $scope.people.indexOf(person);
                 if (index > -1) {
                     $scope.people.splice(index, 1);
                 }
                 $scope.loading = false;
                 $scope.$apply();
-            }, function () {
+            }, () => {
                 $scope.loading = false;
                 $scope.$apply();
             })
         };
 
-        $scope.refresh = function () {
+        $scope.refresh = () => {
             $scope.loading = true;
-            $scope.client.recs().then(function (recs) {
+            $scope.client.recs().then((recs) => {
                 $scope.people = recs;
                 $scope.loading = false;
                 $scope.$apply();
-            }, function () {
+            }, () => {
                 $scope.people = [];
                 $scope.loading = false;
                 $scope.$apply();

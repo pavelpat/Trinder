@@ -1,15 +1,14 @@
-(function (App) {
+((App) => {
     'use strict';
 
-    App.controller('MatchesController', function ($scope, Auth, Store) {
+    App.controller('MatchesController', function ($scope, ReadyClient, Store) {
         // Store section.
         var store = new Store('Matches');
 
         // Auth section.
         $scope.client = null;
         $scope.person = null;
-
-        Auth.singleAuth().then(function (cp) {
+        ReadyClient.then((cp) => {
             $scope.client = cp.client;
             $scope.person = cp.person;
             $scope.refresh();
@@ -26,19 +25,17 @@
             }
         };
 
-        $scope.gallery.open = function (photos, index) {
+        $scope.gallery.open = (photos, index) => {
             $scope.gallery.shown = true;
             $scope.gallery.options.index = index;
-            $scope.gallery.slides = photos.map(function(photo) {
-                return {
-                    src: photo.url,
-                    w: 2048,
-                    h: 2048
-                }
-            });
+            $scope.gallery.slides = photos.map((photo) => ({
+                src: photo.url,
+                w: 2048,
+                h: 2048
+            }));
         };
 
-        $scope.gallery.close = function () {
+        $scope.gallery.close = () => {
             $scope.gallery.shown = false;
         };
 
@@ -48,32 +45,32 @@
         $scope.active = null;
         $scope.message = '';
 
-        $scope.dialog = function (match) {
+        $scope.dialog = (match) => {
             $scope.active = match;
         };
 
-        $scope.send = function (match, message) {
+        $scope.send = (match, message) => {
             $scope.loading = true;
-            $scope.client.send(match.id, message).then(function () {
+            $scope.client.send(match.id, message).then(() => {
                 $scope.message = '';
                 $scope.loading = false;
                 $scope.$apply();
                 $scope.refresh();
-            }, function () {
+            }, () => {
                 $scope.matches = [];
                 $scope.loading = false;
                 $scope.$apply();
             });
         };
 
-        $scope.refresh = function () {
+        $scope.refresh = () => {
             $scope.loading = true;
-            cached().then(fetch).then(merge).then(cache).then(function (updates) {
+            cached().then(fetch).then(merge).then(cache).then((updates) => {
                 $scope.matches = updates.matches;
                 $scope.active = updates.matches[0] || null;
                 $scope.loading = false;
                 $scope.$apply();
-            }, function () {
+            }, () => {
                 $scope.matches = [];
                 $scope.loading = false;
                 $scope.$apply();
@@ -98,9 +95,9 @@
                 lastActivity.setTime(lastActivity.getTime() - 1000 * 60 * 60 * 24 * 31);
             }
 
-            return $scope.client.updates(lastActivity).then(function(updates){
-                return [cachedUpdates, updates || {}];
-            });
+            return $scope.client.updates(lastActivity).then(
+                (updates) => [cachedUpdates, updates || {}]
+            );
         }
 
         function merge(updates) {
@@ -121,9 +118,7 @@
                     lastActivity = new Date(match.lastActivity);
 
                 // Sort messages by date.
-                match.messages.sort(function (a, b) {
-                    return new Date(b.sent) - new Date(a.sent);
-                });
+                match.messages.sort((a, b) => new Date(b.sent) - new Date(a.sent));
 
                 // Insert match to correct place.
                 if (cached.matches.length) {

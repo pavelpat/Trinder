@@ -1,25 +1,18 @@
 (($, App) => {
     'use strict';
 
-    App.factory('Auth', (Store, Echo, Client) => {
+    App.factory('Auth', (Store, Echo) => {
         return new class {
             constructor() {
-                this.authPromise = null;
                 this.store = new Store('Auth');
             }
-
-            singleAuth() {
-                if (!this.authPromise) {
-                    this.authPromise = this._cached().catch(
-                        this._authorize.bind(this)
-                    ).then(
-                        this._credentials.bind(this)
-                    ).then(
-                        this._connect.bind(this)
-                    );
-                }
-                return this.authPromise;
-
+            
+            auth() {
+                return this._cached().catch(
+                    this._authorize.bind(this)
+                ).then(
+                    this._credentials.bind(this)
+                )
             }
 
             _cached() {
@@ -34,7 +27,7 @@
             }
 
             _authorize() {
-                return Echo.send(null).then((data) => {
+                return Echo(null).then((data) => {
                     this.store.set('token', {
                         expiresAt: data.expires * 1000 + Date.now(),
                         token: data.token
@@ -61,23 +54,6 @@
                         });
                     }, () => {
                         reject('Could not get profile info');
-                    });
-                });
-            }
-
-            _connect(credentials) {
-                return new Promise((resolve, reject) => {
-                    var client = new Client(
-                        credentials.id,
-                        credentials.token
-                    );
-                    client.auth().then((person) => {
-                        resolve({
-                            client: client,
-                            person: person
-                        });
-                    }, (e) => {
-                        reject('Could not authenticate: ' + e)
                     });
                 });
             }
