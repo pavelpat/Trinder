@@ -82,7 +82,7 @@
 
         function cached() {
             return store.get('updates').then((updates) => {
-                return updates ? resolve(updates) : {
+                return updates ? updates : {
                     lastActivity: null,
                     matches: []
                 };
