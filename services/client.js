@@ -34,6 +34,10 @@
             });
         }
 
+        user(id) {
+            return this._get('user/' + id);
+        }
+
         pass(id) {
             return this._get('pass/' + id);
         }

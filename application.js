@@ -4,7 +4,8 @@ App = (function (window, angular) {
     var app = angular.module('trinder', [
         'ui.router',
         'ngPhotoswipe',
-        'leaflet-directive'
+        'leaflet-directive',
+        'rzModule'
     ]);
 
     app.config(function ($stateProvider, $urlRouterProvider) {

@@ -23,6 +23,6 @@
     "bootstrap": "^3.3.6",
     "ng-photoswipe": "^0.0.9",
     "angular-leaflet-directive": "^0.10.0",
-    "angular-formstamp": "^0.0.6"
+    "angularjs-slider": "^2.11.0"
   }
 }

@@ -50,8 +50,31 @@
                         lng: 4
                     }
                 }
+            },
+            slider: {
+                floor: 3,
+                ceil: 100,
+                value: 50,
+                translate: (value) => {
+                    value = translateTo(value);
+                    return (value >= 1000) ?
+                        Math.floor(value / 1000) + ',' + Math.floor(value / 100) % 10 + ' km' :
+                        value + ' m';
+                }
             }
         };
+
+        $scope.$watch('location.slider.value', (value) => {
+            $scope.location.paths.radius.radius = translateTo(value);
+        });
+
+        function translateTo(value) {
+            return Math.round(15 * value * value / 50) * 50;
+        }
+
+        function translateFrom(value) {
+            return Math.round(Math.sqrt(value) / 15);
+        }
 
         // Drag circle to marker.
         $scope.$on('leafletDirectiveMarker.move', (event, args) => {
