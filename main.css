@@ -72,6 +72,8 @@ body {
 .people__person-photo {
     margin: 10px;
     border-radius: 5px;
+    width: 172px;
+    height: 172px;
 }
 
 .matches {
