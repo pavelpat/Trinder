@@ -14,7 +14,7 @@ body {
 
 .layout {
     background: #f1f1f1;
-    font-family: 'Noto Color Emoji', Arial, sans-serif;
+    font-family: Arial, sans-serif, 'Noto Color Emoji';
 }
 
 .layout .container {
