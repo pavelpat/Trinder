@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'Noto Color Emoji';
+  src: url('fonts/NotoColorEmoji/NotoColorEmoji.ttf') format('truetype');
+}
+
+
 html, body, html.fancybox-lock, html.fancybox-lock, .fancybox-overlay {
     overflow: auto !important;
 }
@@ -8,6 +14,7 @@ body {
 
 .layout {
     background: #f1f1f1;
+    font-family: 'Noto Color Emoji', Arial, sans-serif;
 }
 
 .layout .container {
@@ -55,6 +62,7 @@ body {
 
 .people__person-bio {
     font-style: italic;
+    white-space: pre;
 }
 
 .people__person-photo-wrap {
