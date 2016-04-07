@@ -1,20 +1,33 @@
 ((chrome, App) => {
     'use strict';
 
-    App.value('Store', class {
+    App.value('Store', class Store {
         constructor(space) {
             this.space = space;
         }
 
+        /**
+         * @param {string} key
+         * @returns {Promise}
+         */
         get(key) {
             key = this._expand(key);
             return new Promise((resolve) => {
                 chrome.storage.local.get(key, (items) => {
-                    resolve(items[key])
+                    if (items.hasOwnProperty(key)) {
+                       resolve(items[key]);
+                    } else {
+                        reject();
+                    }
                 });
             });
         }
 
+        /**
+         * @param {string} key
+         * @param {*} value
+         * @returns {Promise}
+         */
         set(key, value) {
             var values = {};
             values[this._expand(key)] = value;
@@ -25,9 +38,24 @@
             });
         }
 
+        /**
+         * @param {string} key
+         * @returns {Promise}
+         */
         remove(key) {
             return new Promise((resolve) => {
                 chrome.storage.local.remove(this._expand(key), () => {
+                    resolve();
+                })
+            });
+        }
+
+        /**
+         * @returns {Promise}
+         */
+        static clear() {
+            return new Promise((resolve) => {
+                chrome.storage.local.clear(() => {
                     resolve();
                 })
             });

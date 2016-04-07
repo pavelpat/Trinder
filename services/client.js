@@ -83,7 +83,7 @@
             return this._post('updates', {
                 'last_activity_date': since.toISOString()
             }).then((r) => ({
-                lastActivity: r.last_activity_date,
+                lastActivity: new Date(r.last_activity_date),
                 matches: r.matches.map((match) => {
                     return {
                         id: match._id,
@@ -173,10 +173,7 @@
             return new Promise((resolve, reject) => {
                 var client = new Client(credentials.id, credentials.token);
                 client.auth().then((person) => {
-                    resolve({
-                        client: client,
-                        person: person
-                    });
+                    resolve(client, person);
                 }, (e) => {
                     reject('Could not authenticate: ' + e)
                 });

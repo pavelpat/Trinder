@@ -1,111 +1,119 @@
 ((App) => {
     'use strict';
 
-    App.controller('MatchesController', function ($scope, ReadyClient, Store) {
-        // Store section.
-        var store = new Store('Matches');
+    App.controller('MatchesController', class MatchesController {
+        /**
+         * @param $scope
+         * @param {Cache} Cache
+         * @param {Promise} ReadyClient
+         */
+        constructor($scope, Cache, ReadyClient) {
+            this.scope = $scope;
+            this.cache = new Cache();
+            this.client = null;
 
-        // Auth section.
-        $scope.client = null;
-        $scope.person = null;
-        ReadyClient.then((cp) => {
-            $scope.client = cp.client;
-            $scope.person = cp.person;
-            $scope.refresh();
-            $scope.$apply();
-        });
-
-        // Gallery section.
-        $scope.gallery = {
-            shown: false,
-            slides: [],
-            options: {
-                history: false,
-                shareEl: false
-            }
-        };
-
-        $scope.gallery.open = (photos, index) => {
-            $scope.gallery.shown = true;
-            $scope.gallery.options.index = index;
-            $scope.gallery.slides = photos.map((photo) => ({
-                src: photo.url,
-                w: 2048,
-                h: 2048
-            }));
-        };
-
-        $scope.gallery.close = () => {
-            $scope.gallery.shown = false;
-        };
-
-        // Main section.
-        $scope.matches = [];
-        $scope.loading = false;
-        $scope.active = null;
-        $scope.message = '';
-
-        $scope.dialog = (match) => {
-            $scope.active = match;
-        };
-
-        $scope.send = (match, message) => {
-            $scope.loading = true;
-            $scope.client.send(match.id, message).then(() => {
-                $scope.message = '';
-                $scope.loading = false;
-                $scope.$apply();
-                $scope.refresh();
-            }, () => {
-                $scope.matches = [];
-                $scope.loading = false;
-                $scope.$apply();
-            });
-        };
-
-        $scope.refresh = () => {
-            $scope.loading = true;
-            cached().then(fetch).then(merge).then(cache).then((updates) => {
-                $scope.matches = updates.matches;
-                $scope.active = updates.matches[0] || null;
-                $scope.loading = false;
-                $scope.$apply();
-            }, () => {
-                $scope.matches = [];
-                $scope.loading = false;
-                $scope.$apply();
-            });
-        };
-
-        function cached() {
-            return store.get('updates').then((updates) => {
-                return updates ? updates : {
-                    lastActivity: null,
-                    matches: []
-                };
+            ReadyClient.then((client, profile) => {
+                this.initClient(client, profile);
+                this.initGallery();
+                this.initDialog();
             });
         }
 
-        function fetch(cachedUpdates){
-            var lastActivity;
-            if (cachedUpdates.lastActivity) {
-                lastActivity = new Date(cachedUpdates.lastActivity);
-            } else {
-                lastActivity = new Date();
-                lastActivity.setTime(lastActivity.getTime() - 1000 * 60 * 60 * 24 * 31);
-            }
+        initClient(client, profile) {
+            let $s = this.scope;
 
-            return $scope.client.updates(lastActivity).then(
-                (updates) => [cachedUpdates, updates || {}]
-            );
+            this.cache.profile = profile;
+            this.scope.ready = client;
+            this.scope.person = profile;
+
+            // this.scope.refresh();
+
+            this.scope.$apply();
         }
 
-        function merge(updates) {
-            var cached = updates[0],
-                fetched = updates[1];
+        initDialog() {
+            let $s = this.scope;
 
+            $s.matches = [];
+            $s.loading = false;
+            $s.active = null;
+            $s.message = '';
+
+            $s.dialog = (match) => {
+                $s.active = match;
+            };
+
+            $s.send = (match, message) => {
+                $s.loading = true;
+                $s.client.send(match.id, message).then(() => {
+                    $s.message = '';
+                    $s.loading = false;
+                    $s.$apply();
+                    $s.refresh();
+                }, () => {
+                    $s.matches = [];
+                    $s.loading = false;
+                    $s.$apply();
+                });
+            };
+
+            $s.refresh = () => {
+                $s.loading = true;
+                this.update().then((updates) => {
+                    $s.matches = updates.matches;
+                    $s.active = updates.matches[0] || null;
+                    $s.loading = false;
+                    $s.$apply();
+                }, () => {
+                    $s.matches = [];
+                    $s.loading = false;
+                    $s.$apply();
+                });
+            };
+        }
+
+        initGallery() {
+            let $s = this.scope;
+
+            $s.gallery = {
+                shown: false,
+                slides: [],
+                options: {
+                    history: false,
+                    shareEl: false
+                }
+            };
+
+            $s.gallery.open = (photos, index) => {
+                $s.gallery.shown = true;
+                $s.gallery.options.index = index;
+                $s.gallery.slides = photos.map((photo) => ({
+                    src: photo.url,
+                    w: 2048,
+                    h: 2048
+                }));
+            };
+
+            $s.gallery.close = () => {
+                $s.gallery.shown = false;
+            };
+        }
+
+        update() {
+            Promise.all([
+                this.cache.activity,
+                this.cache.matches
+            ]).then((activity, matches) => {
+                return this.client.updates(activity).then((updates) => {
+                    this.cache.activity = updates.lastActivity;
+                    this.cache.matches = this.merge(matches, updates.matches);
+                });
+            });
+        }
+
+        merge(cached, fetched) {
             // Take last activity date.
-            cached.lastActivity = fetched.lastActivity;
+            cached.lastActivity = fetched.activity;
 
             // There is already ordered data in cache.
             if (!fetched.matches.length) {
@@ -113,9 +121,8 @@
             }
 
             // Merge matches items with order.
-            for (var i = 0; i < fetched.matches.length; i++) {
-                var match = fetched.matches[i],
-                    lastActivity = new Date(match.lastActivity);
+            for (let match of fetched.matches) {
+                var lastActivity = new Date(match.activity);
 
                 // Sort messages by date.
                 match.messages.sort((a, b) => new Date(b.sent) - new Date(a.sent));
@@ -125,9 +132,9 @@
                     var replaced = false;
 
                     // Replace existent match.
-                    for (var j = 0; j < cached.matches.length; j++) {
-                        if (match.id == cached.matches[j].id) {
-                            cached.matches[j] = match;
+                    for (var i = 0; i < cached.matches.length; i++) {
+                        if (match.id == cached.matches[i].id) {
+                            cached.matches[i] = match;
                             replaced = true;
                             break;
                         }
@@ -135,21 +142,21 @@
 
                     // Insert new match.
                     if (!replaced) for (var j = 0; j < cached.matches.length; j++) {
-                        var currCachedActivity = new Date(cached.matches[j].lastActivity),
-                            prevCachedActivity = (j != 0) ? new Date(cached.matches[j - 1].lastActivity) : null;
+                        var currCachedActivity = new Date(cached.matches[j].activity),
+                            prevCachedActivity = (j != 0) ? new Date(cached.matches[j - 1].activity) : null;
 
                         if (
                             // Merge first element.
-                            (lastActivity > currCachedActivity && prevCachedActivity === null) ||
+                        (lastActivity > currCachedActivity && prevCachedActivity === null) ||
 
-                            // Merge middle element.
-                            (lastActivity > currCachedActivity && lastActivity <= prevCachedActivity)
+                        // Merge middle element.
+                        (lastActivity > currCachedActivity && lastActivity <= prevCachedActivity)
                         ) {
                             cached.matches.splice(j, 0, match);
                             break;
                         } else if (
                             // Merge last element.
-                            lastActivity < currCachedActivity && j == cached.matches.length - 1
+                        lastActivity < currCachedActivity && j == cached.matches.length - 1
                         ) {
                             cached.matches.splice(j + 1, 0, match);
                             break;
@@ -162,10 +169,5 @@
 
             return cached;
         }
-
-        function cache(updates) {
-            store.set('updates', updates);
-            return updates;
-        }
-    })
+    });
 })(App);

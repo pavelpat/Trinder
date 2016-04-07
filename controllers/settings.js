@@ -6,9 +6,9 @@
         $scope.client = null;
         $scope.person = null;
 
-        ReadyClient.then((cp) => {
-            $scope.client = cp.client;
-            $scope.person = cp.person;
+        ReadyClient.then((client, person) => {
+            $scope.client = client;
+            $scope.person = person;
             $scope.$apply();
         });
 
@@ -63,6 +63,12 @@
                 }
             }
         };
+
+        navigator.geolocation.getCurrentPosition(function(geoposition){
+            $scope.location.markers.location.lng = geoposition.coords.longitude;
+            $scope.location.markers.location.lat = geoposition.coords.latitude;
+            $scope.$apply();
+        });
 
         $scope.$watch('location.slider.value', (value) => {
             $scope.location.paths.radius.radius = translateTo(value);

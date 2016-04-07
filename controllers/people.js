@@ -6,9 +6,9 @@
         $scope.client = null;
         $scope.person = null;
 
-        ReadyClient.then((cp) => {
-            $scope.client = cp.client;
-            $scope.person = cp.person;
+        ReadyClient.then((client, person) => {
+            $scope.client = client;
+            $scope.person = person;
             $scope.refresh();
             $scope.$apply();
         });
