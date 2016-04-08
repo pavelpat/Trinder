@@ -12,7 +12,7 @@
          */
         get(key) {
             key = this._expand(key);
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 chrome.storage.local.get(key, (items) => {
                     if (items.hasOwnProperty(key)) {
                        resolve(items[key]);
