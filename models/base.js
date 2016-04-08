@@ -156,7 +156,7 @@
             for (let key in this.fields) {
                 let field = this.fields[key];
                 if (field instanceof BaseField) {
-                    this[key] = field.toModel(value[field.attr || key]);
+                    this[key] = value ? field.toModel(value[field.attr || key]) : null;
                 }
             }
         }
@@ -169,7 +169,7 @@
             for (let key in this.fields) {
                 let field = this.fields[key];
                 if (field instanceof BaseField) {
-                    result[field.attr || key] = field.toObject(value[key]);
+                    result[field.attr || key] = field.toObject(this[key]);
                 }
             }
             return result;

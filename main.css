@@ -68,6 +68,10 @@ body {
     margin: 0 -10px;
 }
 
+.people__person-photo-wrap div {
+    display: inline-block;
+}
+
 .people__person-photo {
     margin: 10px;
     border-radius: 5px;

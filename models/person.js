@@ -1,12 +1,12 @@
 ((App) => {
     'use strict';
 
-    App.factory('ProfileModel', function (
+    App.factory('PersonModel', function (
         BaseModel, PhotoModel, JobModel, SchoolModel,
         ModelField, ArrayField, NumberField, StringField, DateField
     ) {
-        class ProfileModel extends BaseModel {}
-        ProfileModel.prototype.fields = {
+        class PersonModel extends BaseModel {}
+        PersonModel.prototype.fields = {
             'id': new StringField('_id'),
             'ping': new DateField('ping_time'),
             'birth': new DateField('birth_date'),
@@ -22,6 +22,6 @@
             'schools': new ArrayField('schools', new ModelField(null, SchoolModel))
         };
 
-        return ProfileModel;
+        return PersonModel;
     });
 })(App);

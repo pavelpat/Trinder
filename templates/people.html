@@ -8,10 +8,12 @@
         <div class="people__person-name">{{ person.name }}</div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">
-            <img class="people__person-photo" src="{{ photo[172].url }}"
-                 ng-repeat="photo in person.photos | limitTo : 5"
-                 ng-click="gallery.open(person.photos, $index)"
-                 ng-if="photo[172].url" >
+            <div ng-repeat="photo in person.photos | limitTo : 5" ng-init="index = $index">
+                <img class="people__person-photo" src="{{ processed.url }}"
+                     ng-repeat="processed in photo.processed"
+                     ng-click="gallery.open(person.photos, index)"
+                     ng-if="processed.width == 172">
+            </div>
         </div>
         <button class="btn btn-danger" ng-click="pass(person)">Dislike</button>
         <button class="btn btn-primary" ng-click="like(person)">Like</button>

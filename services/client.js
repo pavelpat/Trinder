@@ -1,7 +1,7 @@
 (($, App) => {
     'use strict';
 
-    App.factory('Client', function(UserModel) {
+    App.factory('Client', function(UserModel, PersonModel) {
         return class Client {
             constructor(fbId, fbToken) {
                 this.fbId = fbId;
@@ -33,7 +33,9 @@
             }
 
             user(id) {
-                return this._get('user/' + id);
+                return this._get('user/' + id).then((response) => {
+                    return new PersonModel(response.results);
+                });
             }
 
             pass(id) {
@@ -45,29 +47,8 @@
             }
 
             recs() {
-                return this._get('user/recs').then((r) => {
-                    return r.results.map((r) => {
-                        return {
-                            id: r._id,
-                            name: r.name,
-                            bio: r.bio,
-                            birthDate: r.birth_date,
-                            photos: r.photos.map((photo) => {
-                                var photos = {
-                                    url: photo.url
-                                };
-                                photo.processedFiles.forEach((photo) => {
-                                    photos[photo.width] = {
-                                        width: photo.width,
-                                        height: photo.height,
-                                        url: photo.url
-                                    }
-                                });
-
-                                return photos;
-                            })
-                        };
-                    });
+                return this._get('user/recs').then((response) => {
+                    return response.results.map((person) => new PersonModel(person));
                 });
             }
 
