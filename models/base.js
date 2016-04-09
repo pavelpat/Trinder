@@ -16,40 +16,48 @@
         toObject(value) {
             return value;
         }
+
+        empty(value) {
+            return value === null || value === undefined;
+        }
     }
 
     class BoolField extends BaseField {
         /**
          * @param {*} value
-         * @returns {bool}
+         * @returns {bool|null}
          */
         toModel(value) {
+            if (this.empty(value)) return null;
             return !!value;
         }
 
         /**
          * @param {*} value
-         * @returns {bool}
+         * @returns {bool|null}
          */
         toObject(value) {
-            return !!value * 1;
+            if (this.empty(value)) return null;
+            return !!value;
         }
     }
 
     class NumberField extends BaseField {
         /**
          * @param {*} value
-         * @returns {number}
+         * @returns {number|null}
          */
         toModel(value) {
+            if (this.empty(value)) return null;
             return value * 1;
         }
 
         /**
          * @param {*} value
-         * @returns {number}
+         * @returns {number|null}
          */
         toObject(value) {
+            if (this.empty(value)) return null;
             return value * 1;
         }
     }
@@ -57,31 +65,39 @@
     class StringField extends BaseField {
         /**
          * @param {*} value
-         * @returns {string}
+         * @returns {string|null}
          */
         toModel(value) {
+            if (this.empty(value)) return null;
             return value + '';
         }
 
         /**
          * @param {*} value
-         * @returns {string}
+         * @returns {string|null}
          */
         toObject(value) {
+            if (this.empty(value)) return null;
             return value + '';
         }
     }
 
     class DateField extends BaseField {
+        /**
+         * @param {*} value
+         * @returns {Date|null}
+         */
         toModel(value) {
+            if (this.empty(value)) return null;
             return new Date(value);
         }
 
         /**
          * @param {Date} value
-         * @returns {string}
+         * @returns {string|null}
          */
         toObject(value) {
+            if (this.empty(value)) return null;
             return value.toISOString();
         }
     }
@@ -98,26 +114,20 @@
 
         /**
          * @param {Array} value
-         * @returns {Array}
+         * @returns {Array|null}
          */
         toModel(value) {
-            let result = [];
-            for (let i = 0; i < (value || []).length || 0; i++) {
-                result.push(this.field.toModel(value[i]));
-            }
-            return result;
+            if (this.empty(value)) return null;
+            return (value || []).map((v) => this.field.toModel(v));
         }
 
         /**
-         * @param {Array} value
+         * @param {Array|null} value
          * @returns {Array}
          */
         toObject(value) {
-            let result = [];
-            for (let i = 0; i < (value || []).length; i++) {
-                result.push(this.field.toObject(value[i]));
-            }
-            return result;
+            if (this.empty(value)) return null;
+            return (value || []).map((v) => this.field.toObject(v));
         }
     }
 
@@ -136,6 +146,7 @@
          * @returns {BaseModel}
          */
         toModel(value) {
+            if (this.empty(value)) return null;
             return new this.model(value);
         }
 
@@ -144,6 +155,7 @@
          * @returns {Object}
          */
         toObject(value) {
+            if (this.empty(value)) return null;
             return value.toObject();
         }
     }
@@ -156,7 +168,7 @@
             for (let key in this.fields) {
                 let field = this.fields[key];
                 if (field instanceof BaseField) {
-                    this[key] = value ? field.toModel(value[field.attr || key]) : null;
+                    this[key] = field.toModel(value[field.attr || key]);
                 }
             }
         }

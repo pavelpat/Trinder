@@ -84,25 +84,20 @@
              */
             $scope.message = '';
 
-            $scope.$watch('client', (value) => {
-                if (value !== null) {
-                    $scope.refresh();
-                }
-            });
-
             $scope.refresh = () => {
                 $scope.loading = true;
                 Promise.all([
                     MatchesCache.activity,
                     MatchesCache.matches
-                ]).then((ready) => $scope.client.updates(ready[0]).then((update) => {
-                    let merged = merge(ready[1], update.matches);
+                ]).then(([activity, matches]) => $scope.client.updates(activity).then((update) => {
+                    let merged = merge(matches, update.matches);
                     MatchesCache.activity = update.activity;
                     MatchesCache.matches = merged;
                     return merged;
                 })).then((matches) => {
                     $scope.loading = false;
                     $scope.matches = matches;
+                    $scope.active = matches.length ? matches[0] : null;
                     $scope.$apply();
                 });
             };
@@ -126,66 +121,43 @@
                 });
             };
 
+            $scope.$watch('client', (value) => {
+                if (value !== null) {
+                    $scope.refresh();
+                }
+            });
+
             /**
              * @param {Array<MatchModel>} cached
              * @param {Array<MatchModel>} fetched
+             * @returns {Array<MatchModel>}
              */
             function merge(cached, fetched) {
                 let results = ng.copy(cached);
 
-                // There is already ordered data in cache.
-                if (!fetched.length) {
-                    return results;
-                }
-
-                // Merge matches items with order.
                 for (let match of fetched) {
-                    // Sort messages by date.
-                    match.messages.sort((a, b) => b.sent - a.sent);
+                    let merged = false;
 
-                    // Insert match to correct place.
-                    if (results.length) {
-                        let merged = false;
-
-                        // Merge match.
-                        for (let result of results) if (result.id == match.id) {
-                            for (let attr of ['activity', 'person', 'messages']) {
-                                if (match[attr]) {
-                                    result[attr] = match[attr];
-                                }
-                            }
-                            merged = true;
-                            break;
+                    // Merge match.
+                    for (let result of results) if (result.id == match.id) {
+                        for (let attr of ['activity', 'person', 'messages']) if (match[attr]) {
+                            result[attr] = match[attr];
                         }
+                        merged = true;
+                        break;
+                    }
 
-                        // Insert new match.
-                        if (!merged) for (var j = 0; j < results.length; j++) {
-                            var currCachedActivity = results[j].activity,
-                                prevCachedActivity = (j != 0) ? results[j - 1].activity : null;
-
-                            if (
-                                // Merge first element.
-                                (match.activity > currCachedActivity && prevCachedActivity === null) ||
-
-                                // Merge middle element.
-                                (match.activity > currCachedActivity && match.activity <= prevCachedActivity)
-                            ) {
-                                results.splice(j, 0, match);
-                                break;
-                            } else if (
-                                // Merge last element.
-                                match.activity < currCachedActivity && j == results.length - 1
-                            ) {
-                                results.splice(j + 1, 0, match);
-                                break;
-                            }
-                        }
-                    } else {
+                    // Insert new match.
+                    if (!merged) {
                         results.push(match);
                     }
+
+                    // Sort messages
+                    match.messages.sort((a, b) => b.sent - a.sent);
                 }
 
-                return results;
+                // Sort matches.
+                return results.sort((a, b) => b.activity - a.activity);
             }
         }
     });

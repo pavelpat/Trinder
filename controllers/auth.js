@@ -8,11 +8,11 @@
         Auth.auth().then((credentials) => new Promise((resolve, reject) => {
             var client = new Client(credentials.id, credentials.token);
             client.auth().then((person) => {
-                resolve(client, person);
+                resolve([client, person]);
             }, (e) => {
                 reject('Could not authenticate: ' + e)
             });
-        })).then((client, person) => {
+        })).then(([client, person]) => {
             $rootScope.client = client;
             $rootScope.person = person;
             $rootScope.$apply();
