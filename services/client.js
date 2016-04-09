@@ -20,9 +20,12 @@
                 });
             }
 
-            meta() {
-                return new Promise((resolve, reject) => {
-                    reject('Not implemented');
+            profile(distance) {
+                let distanceMi = Math.round(distance / 1.60934 / 1000);
+                distanceMi = distanceMi < 1 ? 1 : distanceMi;
+                distanceMi = distanceMi > 150 ? 150 : distanceMi;
+                return this._post('profile', {
+                    'distance_filter': distanceMi
                 });
             }
 
@@ -33,7 +36,7 @@
                 });
             }
 
-            user(id) {
+            person(id) {
                 return this._get('user/' + id).then((response) => {
                     return new PersonModel(response.results);
                 });

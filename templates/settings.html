@@ -3,7 +3,7 @@
     <h2>Positioning</h2>
     <div class="settings__setting">
         <form>
-            <div class="checkbox">
+            <div class="form-group checkbox">
                 <label>
                     <input type="checkbox" ng-model="settings.geolocation">
                     Automatically select my location
@@ -16,10 +16,10 @@
                 <rzslider rz-slider-model="location.slider.value"
                           rz-slider-options="location.slider"></rzslider>
             </div>
-            <button type="submit" class="btn btn-default" ng-click="save(); saved = 'Settings saved!'">
+            <button type="submit" class="btn btn-default" ng-click="save()">
                 Save settings
             </button>
-            <span>{{ saved }}</span>
+            <span ng-if="saved">Settings saved!</span>
         </form>
     </div>
 </div>

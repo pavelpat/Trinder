@@ -83,17 +83,22 @@
                 }
             },
             slider: {
-                floor: 3,
+                floor: 10,
                 ceil: 100,
-                value: 50,
+                value: 45,
                 translate: (value) => {
                     value = translateTo(value);
-                    return (value >= 1000) ?
-                        Math.floor(value / 1000) + ',' + Math.floor(value / 100) % 10 + ' km' :
-                        value + ' m';
+                    return Math.floor(value / 1000) + ',' +
+                        Math.floor(value / 100) % 10 + ' km';
                 }
             }
         };
+
+        if ($scope.user !== null) {
+            let distance = $scope.user.distance * 1000 * 1.60934;
+            $scope.location.paths.radius.radius = distance;
+            $scope.location.slider.value = translateFrom(distance);
+        }
 
         $scope.$watch('location.slider.value', (value) => {
             $scope.location.paths.radius.radius = translateTo(value);
@@ -143,7 +148,16 @@
 
         // Save settings.
         $scope.save = () => {
+            $scope.loading = true;
             SettingsStore.settings = $scope.settings;
+            Promise.all([
+                $scope.client.ping($scope.settings.geolat, $scope.settings.geolon),
+                $scope.client.profile(translateTo($scope.location.slider.value))
+            ]).then(() => {
+                $scope.loading = false;
+                $scope.saved = true;
+                $scope.$apply();
+            });
         };
     });
 })(App);
