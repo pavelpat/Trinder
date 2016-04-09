@@ -6,7 +6,7 @@
         $rootScope.user = null;
 
         Auth.auth().then((credentials) => new Promise((resolve, reject) => {
-            var client = new Client(credentials.id, credentials.token);
+            let client = new Client(credentials.id, credentials.token);
             client.auth().then((user) => {
                 geolocation(client).then(() => {
                     resolve([client, user]);
