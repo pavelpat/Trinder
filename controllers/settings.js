@@ -1,15 +1,11 @@
 ((App) => {
     'use strict';
 
-    App.controller('SettingsController', function ($scope, ReadyClient) {
-        // Auth section.
-        $scope.client = null;
-        $scope.person = null;
-
-        ReadyClient.then((client, person) => {
-            $scope.client = client;
-            $scope.person = person;
-            $scope.$apply();
+    App.controller('SettingsController', function ($scope) {
+        $scope.$watch('client', (value) => {
+            if (value !== null) {
+                // $scope.refresh();
+            }
         });
 
         // Settings section.

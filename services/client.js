@@ -111,17 +111,4 @@
             }
         }
     });
-
-    App.factory('ReadyClient', (Auth, Client) => {
-        return Auth.auth().then((credentials) => {
-            return new Promise((resolve, reject) => {
-                var client = new Client(credentials.id, credentials.token);
-                client.auth().then((person) => {
-                    resolve(client, person);
-                }, (e) => {
-                    reject('Could not authenticate: ' + e)
-                });
-            });
-        });
-    });
 })(jQuery, App);

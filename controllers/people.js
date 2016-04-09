@@ -1,43 +1,12 @@
 ((App) => {
     'use strict';
 
-    App.controller('PeopleController', function ($scope, ReadyClient) {
-        // Auth section.
-        $scope.client = null;
-        $scope.person = null;
-
-        ReadyClient.then((client, person) => {
-            $scope.client = client;
-            $scope.person = person;
-            $scope.refresh();
-            $scope.$apply();
+    App.controller('PeopleController', function ($scope) {
+        $scope.$watch('client', (value) => {
+            if (value !== null) {
+                $scope.refresh();
+            }
         });
-
-        // Gallery section.
-        $scope.gallery = {
-            shown: false,
-            options: {
-                history: false,
-                shareEl: false
-            },
-            slides: []
-        };
-
-        $scope.gallery.open = (photos, index) => {
-            $scope.gallery.shown = true;
-            $scope.gallery.options.index = index;
-            $scope.gallery.slides = photos.map((photo) => {
-                return {
-                    src: photo.url,
-                    w: 2048,
-                    h: 2048
-                }
-            });
-        };
-
-        $scope.gallery.close = () => {
-            $scope.gallery.shown = false;
-        };
 
         // Main section.
         $scope.people = [];

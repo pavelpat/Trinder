@@ -1,30 +1,45 @@
-<div class="preloader" ng-show="loading"></div>
+<div class="preloader" ng-show="!client || loading"></div>
 <ng-photoswipe open="gallery.shown" on-close="gallery.close()"
-    slides="gallery.slides" options="gallery.options"
-    template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
+               slides="gallery.slides" options="gallery.options"
+               template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
 <div class="layout__flex matches">
     <ul class="matches__list">
-        <li class="matches__list-item" ng-repeat="match in matches" ng-click="dialog(match)"
-            ng-class="match == active ? 'matches__list-item__active' : ''">
-            <img class="matches__list-item-photo"  src="{{ match.person.photos[0][84].url }}"
+        <li class="matches__list-item"
+            ng-class="match == active ? 'matches__list-item__active' : ''"
+            ng-repeat="match in matches" ng-click="dialog(match)">
+            <img class="matches__list-item-photo" src="{{ processed.url }}"
+                 ng-repeat="processed in match.person.photos[0].processed"
+                 ng-if="processed.width == 84"
                  ng-click="gallery.open(match.person.photos, 0)">
-            <div class="matches__list-item-name" title="{{ match.person.name }}">{{ match.person.name }}</div>
-            <div class="matches__list-item-bio" title="{{ match.person.bio }}">{{ match.person.bio || '...' }}</div>
-            <img class="matches__list-item-photo-small" src="{{ photo[84].url }}"
-                 ng-repeat="photo in match.person.photos" ng-show="!$first"
-                 ng-click="gallery.open(match.person.photos, $index)">
+            <div class="matches__list-item-name"
+                 title="{{ match.person.name }}">
+                {{ match.person.name }}
+            </div>
+            <div class="matches__list-item-bio" title="{{ match.person.bio }}">
+                {{ match.person.bio || '...' }}
+            </div>
+            <div class="matches__list-item-photos-small"
+                 ng-repeat="photo in match.person.photos"
+                 ng-init="index = $index" ng-show="!$first">
+                <img class="matches__list-item-photo-small" src="{{ processed.url }}"
+                     ng-repeat="processed in photo.processed" ng-if="processed.width == 84"
+                     ng-click="gallery.open(match.person.photos, index)">
+            </div>
         </li>
     </ul>
     <div class="layout__block matches__chat" ng-if="active">
         <div class="message">
-            <textarea class="form-control message__message" ng-model="message"></textarea>
+            <textarea class="form-control message__message"
+                      ng-model="message"></textarea>
             <button class="btn btn-primary message__send"
-                    ng-click="send(active, message); message = ''" ng-disabled="!message">
+                    ng-click="send(active, message); message = ''"
+                    ng-disabled="!message">
                 Send
             </button>
         </div>
         <ul class="matches__messages">
-            <li class="matches__messages-item" ng-repeat="message in active.messages" ng-if="active">
+            <li class="matches__messages-item"
+                ng-repeat="message in active.messages" ng-if="active">
                 <div class="matches__messages-item-left">
                     <div class="matches__messages-item-left-from">
                         {{ message.from == active.person.id ? active.person.name : person.name }}

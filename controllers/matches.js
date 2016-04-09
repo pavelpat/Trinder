@@ -1,168 +1,178 @@
 ((App) => {
     'use strict';
 
-    App.controller('MatchesController', class MatchesController {
+    App.factory('MatchesCache', (Store) => new class MatchesCache {
+        constructor() {
+            this.store = new Store('Cache');
+        }
+
+        get profile() {
+            return this.store.get('profile').catch(() => ({}));
+        }
+
+        set profile(value) {
+            this.store.set('profile', value);
+        }
+
         /**
-         * @param $scope
-         * @param {Cache} Cache
-         * @param {Promise} ReadyClient
+         * @returns {Promise.<Date>}
          */
-        constructor($scope, Cache, ReadyClient) {
-            this.scope = $scope;
-            this.cache = new Cache();
-            this.client = null;
-
-            $scope.loading = true;
-            ReadyClient.then((client, profile) => {
-                $scope.profile = profile;
-                $scope.loading = false;
-                $scope.$apply();
-
-                this.client = client;
-                // this.initGallery();
-                // this.initDialog();
-
-                this.client.updates(new Date(2012)).then((updates) => {
-                    $scope.matches = updates.matches;
-                    $scope.$apply();
-                });
+        get activity() {
+            return this.store.get('activity').then((activity) => {
+                return new Date(activity);
+            }, () => {
+                var activity = new Date(),
+                    interval = 1000 * 60 * 60 * 24 * 31 * 12 * 10;
+                activity.setTime(activity.getTime() - interval);
+                return activity;
             });
         }
 
-        initDialog() {
-            let $s = this.scope;
-
-            $s.matches = [];
-            $s.loading = false;
-            $s.active = null;
-            $s.message = '';
-
-            $s.dialog = (match) => {
-                $s.active = match;
-            };
-
-            $s.send = (match, message) => {
-                $s.loading = true;
-                $s.client.send(match.id, message).then(() => {
-                    $s.message = '';
-                    $s.loading = false;
-                    $s.$apply();
-                    $s.refresh();
-                }, () => {
-                    $s.matches = [];
-                    $s.loading = false;
-                    $s.$apply();
-                });
-            };
-
-            $s.refresh = () => {
-                $s.loading = true;
-                this.update().then((updates) => {
-                    $s.matches = updates.matches;
-                    $s.active = updates.matches[0] || null;
-                    $s.loading = false;
-                    $s.$apply();
-                }, () => {
-                    $s.matches = [];
-                    $s.loading = false;
-                    $s.$apply();
-                });
-            };
+        //noinspection JSAnnotator
+        /**
+         * @param {Date} value
+         */
+        set activity(value) {
+            this.store.set('activity', value.toISOString());
         }
 
-        initGallery() {
-            let $s = this.scope;
+        get matches() {
+            return this.store.get('matches').catch(() => []);
+        }
 
-            $s.gallery = {
-                shown: false,
-                slides: [],
-                options: {
-                    history: false,
-                    shareEl: false
+        set matches(value) {
+            this.store.set('matches', value);
+        }
+
+        reset() {
+            return Promise.all([
+                this.store.remove('profile'),
+                this.store.remove('activity'),
+                this.store.remove('matches')
+            ]);
+        }
+    });
+
+    App.controller('MatchesController', class MatchesController {
+        /**
+         * @param $scope
+         * @param {MatchesCache} MatchesCache
+         */
+        constructor($scope, MatchesCache) {
+            /**
+             * @type {Array<MatchModel>}
+             */
+            $scope.matches = [];
+
+            /**
+             * @type {MatchModel|null}
+             */
+            $scope.active = null;
+
+            /**
+             * @type {string}
+             */
+            $scope.message = '';
+
+            $scope.$watch('client', (value) => {
+                if (value !== null) {
+                    $scope.refresh();
                 }
+            });
+
+            $scope.refresh = () => {
+                $scope.loading = true;
+                Promise.all([
+                    MatchesCache.activity,
+                    MatchesCache.matches
+                ]).then((ready) => $scope.client.updates(ready[0]).then((update) => {
+                    let merged = merge(ready[1], update.matches);
+                    MatchesCache.activity = update.activity;
+                    MatchesCache.matches = merged;
+                    return merged;
+                })).then((matches) => {
+                    $scope.loading = false;
+                    $scope.matches = matches;
+                    $scope.$apply();
+                });
             };
 
-            $s.gallery.open = (photos, index) => {
-                $s.gallery.shown = true;
-                $s.gallery.options.index = index;
-                $s.gallery.slides = photos.map((photo) => ({
-                    src: photo.url,
-                    w: 2048,
-                    h: 2048
-                }));
+            $scope.dialog = (match) => {
+                $scope.active = match;
+            };
+        
+            $scope.send = (match, message) => {
+                $scope.loading = true;
+                $scope.client.send(match.id, message).then(() => {
+                    $scope.message = '';
+                    $scope.loading = false;
+                    $scope.refresh();
+                    $scope.$apply();
+                }, () => {
+                    $scope.matches = [];
+                    $scope.loading = false;
+                    $scope.refresh();
+                    $scope.$apply();
+                });
             };
 
-            $s.gallery.close = () => {
-                $s.gallery.shown = false;
-            };
+            /**
+             * @param {Array<MatchModel>} cached
+             * @param {Array<MatchModel>} fetched
+             */
+            function merge(cached, fetched) {
+                // There is already ordered data in cache.
+                if (!fetched.length) {
+                    return cached;
+                }
+
+                // Merge matches items with order.
+                for (let match of fetched) {
+                    // Sort messages by date.
+                    match.messages.sort((a, b) => b.sent - a.sent);
+
+                    // Insert match to correct place.
+                    if (cached.length) {
+                        var replaced = false;
+
+                        // Replace existent match.
+                        for (var i = 0; i < cached.length; i++) {
+                            if (match.id == cached[i].id) {
+                                cached[i] = match;
+                                replaced = true;
+                                break;
+                            }
+                        }
+
+                        // Insert new match.
+                        if (!replaced) for (var j = 0; j < cached.length; j++) {
+                            var currCachedActivity = cached[j].activity,
+                                prevCachedActivity = (j != 0) ? cached[j - 1].activity : null;
+
+                            if (
+                                // Merge first element.
+                                (match.activity > currCachedActivity && prevCachedActivity === null) ||
+
+                                // Merge middle element.
+                                (match.activity > currCachedActivity && match.activity <= prevCachedActivity)
+                            ) {
+                                cached.splice(j, 0, match);
+                                break;
+                            } else if (
+                                // Merge last element.
+                                match.activity < currCachedActivity && j == cached.length - 1
+                            ) {
+                                cached.splice(j + 1, 0, match);
+                                break;
+                            }
+                        }
+                    } else {
+                        cached.push(match);
+                    }
+                }
+
+                return cached;
+            }
         }
-
-        // update() {
-        //     // Promise.all([
-        //     //     this.cache.activity,
-        //     //     this.cache.matches
-        //     // ]).then((activity, matches) => {
-        //     //
-        //     // });
-        // }
-        //
-        // merge(cached, fetched) {
-        //     // Take last activity date.
-        //     cached.lastActivity = fetched.activity;
-        //
-        //     // There is already ordered data in cache.
-        //     if (!fetched.matches.length) {
-        //         return cached;
-        //     }
-        //
-        //     // Merge matches items with order.
-        //     for (let match of fetched.matches) {
-        //         var lastActivity = new Date(match.activity);
-        //
-        //         // Sort messages by date.
-        //         match.messages.sort((a, b) => new Date(b.sent) - new Date(a.sent));
-        //
-        //         // Insert match to correct place.
-        //         if (cached.matches.length) {
-        //             var replaced = false;
-        //
-        //             // Replace existent match.
-        //             for (var i = 0; i < cached.matches.length; i++) {
-        //                 if (match.id == cached.matches[i].id) {
-        //                     cached.matches[i] = match;
-        //                     replaced = true;
-        //                     break;
-        //                 }
-        //             }
-        //
-        //             // Insert new match.
-        //             if (!replaced) for (var j = 0; j < cached.matches.length; j++) {
-        //                 var currCachedActivity = new Date(cached.matches[j].activity),
-        //                     prevCachedActivity = (j != 0) ? new Date(cached.matches[j - 1].activity) : null;
-        //
-        //                 if (
-        //                     // Merge first element.
-        //                 (lastActivity > currCachedActivity && prevCachedActivity === null) ||
-        //
-        //                 // Merge middle element.
-        //                 (lastActivity > currCachedActivity && lastActivity <= prevCachedActivity)
-        //                 ) {
-        //                     cached.matches.splice(j, 0, match);
-        //                     break;
-        //                 } else if (
-        //                     // Merge last element.
-        //                 lastActivity < currCachedActivity && j == cached.matches.length - 1
-        //                 ) {
-        //                     cached.matches.splice(j + 1, 0, match);
-        //                     break;
-        //                 }
-        //             }
-        //         } else {
-        //             cached.matches.push(match);
-        //         }
-        //     }
-        //
-        //     return cached;
-        // }
     });
 })(App);
