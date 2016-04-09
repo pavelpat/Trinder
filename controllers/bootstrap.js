@@ -14,7 +14,9 @@
             }, (e) => {
                 reject('Could not authenticate: ' + e)
             });
-        })).then(([client, user]) => {
+        })).then((args) => {
+            let client = args[0],
+                user = args[1];
             $rootScope.client = client;
             $rootScope.user = user;
             $rootScope.$apply();
@@ -25,7 +27,9 @@
                 SettingsStore.settings.then((settings) => {
                     if (settings.geolocation) {
                         // Browser selected location.
-                        Geo().then(([geolat, geolon]) => {
+                        Geo().then((args) => {
+                            let geolat = args[0],
+                                geolon = args[1];
                             client.ping(geolat, geolon).then(() => {
                                 resolve();
                             });

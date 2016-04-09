@@ -73,12 +73,16 @@
                 Promise.all([
                     MatchesStore.activity,
                     MatchesStore.matches
-                ]).then(([activity, matches]) => $scope.client.updates(activity).then((update) => {
-                    let merged = merge(matches, update.matches);
-                    MatchesStore.activity = update.activity;
-                    MatchesStore.matches = merged;
-                    return merged;
-                })).then((matches) => {
+                ]).then((args) => {
+                    let activity = args[0],
+                        matches = args[1];
+                    return $scope.client.updates(activity).then((update) => {
+                        let merged = merge(matches, update.matches);
+                        MatchesStore.activity = update.activity;
+                        MatchesStore.matches = merged;
+                        return merged;
+                    });
+                }).then((matches) => {
                     $scope.loading = false;
                     $scope.matches = matches;
                     $scope.active = matches.length ? matches[0] : null;

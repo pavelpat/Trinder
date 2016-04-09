@@ -124,7 +124,9 @@
             if (value !== undefined) {
                 let marker = $scope.location.markers.location;
                 if (value) {
-                    Geo().then(([geolat, geolon]) => {
+                    Geo().then((args) => {
+                        let geolat = args[0],
+                            geolon = args[1];
                         if (value) {
                             marker.draggable = false;
                             marker.lat = geolat;
