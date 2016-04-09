@@ -1,31 +1,23 @@
 ((ng, App) => {
     'use strict';
 
-    App.factory('MatchesCache', (Store, MatchModel) => new class MatchesCache {
+    App.factory('MatchesStore', (Store, MatchModel) => new class MatchesStore {
         constructor() {
             this.store = new Store('Cache');
-        }
-
-        get profile() {
-            return this.store.get('profile').catch(() => ({}));
-        }
-
-        set profile(value) {
-            this.store.set('profile', value);
         }
 
         /**
          * @returns {Promise.<Date>}
          */
         get activity() {
-            return this.store.get('activity').then((activity) => {
-                return new Date(activity);
-            }, () => {
-                var activity = new Date(),
-                    interval = 1000 * 60 * 60 * 24 * 31 * 12 * 10;
-                activity.setTime(activity.getTime() - interval);
-                return activity;
-            });
+            return this.store.get('activity').then(
+                (activity) => new Date(activity),
+                () => {
+                    var activity = new Date(),
+                        interval = 1000 * 60 * 60 * 24 * 31 * 12 * 10;
+                    activity.setTime(activity.getTime() - interval);
+                    return activity;
+                });
         }
 
         //noinspection JSAnnotator
@@ -53,22 +45,14 @@
         set matches(value) {
             this.store.set('matches', value.map((v) => v.toObject()));
         }
-
-        reset() {
-            return Promise.all([
-                this.store.remove('profile'),
-                this.store.remove('activity'),
-                this.store.remove('matches')
-            ]);
-        }
     });
 
     App.controller('MatchesController', class MatchesController {
         /**
          * @param $scope
-         * @param {MatchesCache} MatchesCache
+         * @param {MatchesStore} MatchesStore
          */
-        constructor($scope, MatchesCache) {
+        constructor($scope, MatchesStore) {
             /**
              * @type {Array<MatchModel>}
              */
@@ -87,12 +71,12 @@
             $scope.refresh = () => {
                 $scope.loading = true;
                 Promise.all([
-                    MatchesCache.activity,
-                    MatchesCache.matches
+                    MatchesStore.activity,
+                    MatchesStore.matches
                 ]).then(([activity, matches]) => $scope.client.updates(activity).then((update) => {
                     let merged = merge(matches, update.matches);
-                    MatchesCache.activity = update.activity;
-                    MatchesCache.matches = merged;
+                    MatchesStore.activity = update.activity;
+                    MatchesStore.matches = merged;
                     return merged;
                 })).then((matches) => {
                     $scope.loading = false;

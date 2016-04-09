@@ -26,9 +26,10 @@
                 });
             }
 
-            ping() {
-                return new Promise((resolve, reject) => {
-                    reject('Not implemented');
+            ping(lat, lon) {
+                return this._post('user/ping', {
+                    'lat': lat,
+                    'lon': lon
                 });
             }
 

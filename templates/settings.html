@@ -1,10 +1,25 @@
 <div class="preloader" ng-show="!client || loading"></div>
 <div class="settings layout__block">
-    <h2>Geo location</h2>
+    <h2>Positioning</h2>
     <div class="settings__setting">
-        <leaflet width="100%" height="480px" defaults="location.defaults" event-broadcast="location.events"
-                 markers="location.markers" paths="location.paths"></leaflet>
-        <rzslider rz-slider-model="location.slider.value"
-                  rz-slider-options="location.slider"></rzslider>
+        <form>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="settings.geolocation">
+                    Automatically select my location
+                </label>
+            </div>
+            <div class="form-group">
+                <leaflet width="100%" height="480px" defaults="location.defaults"
+                         event-broadcast="location.events" markers="location.markers"
+                         paths="location.paths"></leaflet>
+                <rzslider rz-slider-model="location.slider.value"
+                          rz-slider-options="location.slider"></rzslider>
+            </div>
+            <button type="submit" class="btn btn-default" ng-click="save(); saved = 'Settings saved!'">
+                Save settings
+            </button>
+            <span>{{ saved }}</span>
+        </form>
     </div>
 </div>

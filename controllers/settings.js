@@ -1,15 +1,50 @@
 ((App) => {
     'use strict';
 
-    App.controller('SettingsController', function ($scope) {
-        $scope.$watch('client', (value) => {
-            if (value !== null) {
-                // $scope.refresh();
-            }
+    App.value('DefaultSettings', {
+        'geolocation': true,
+        'geolat': 51.5,
+        'geolon': -0.125
+    });
+
+    App.factory('SettingsStore', (Store, SettingsModel, DefaultSettings) => new class SettingsStore {
+        constructor() {
+            this.store = new Store('Settings');
+        }
+
+        /**
+         * @returns {Promise.<SettingsModel>}
+         */
+        get settings() {
+            return this.store.get('settings').then(
+                (settings) => new SettingsModel(settings),
+                () => new SettingsModel(DefaultSettings)
+            );
+        }
+
+        //noinspection JSAnnotator
+        /**
+         * @param {SettingsModel} value
+         */
+        set settings(value) {
+            this.store.set('settings', value.toObject());
+        }
+    });
+
+    App.controller('SettingsController', function ($scope, Geo, DefaultSettings, SettingsStore) {
+        $scope.settings = null;
+        SettingsStore.settings.then((settings) => {
+            $scope.settings = settings;
+            $scope.$apply();
         });
 
-        // Settings section.
-        $scope.settings = [];
+        $scope.$watch('user', (user) => {
+            if (user !== null) {
+                let distance = user.distance * 1000 * 1.60934;
+                $scope.location.paths.radius.radius = distance;
+                $scope.location.slider.value = translateFrom(distance);
+            }
+        });
 
         // Locations section.
         $scope.location = {
@@ -40,7 +75,7 @@
             paths: {
                 radius: {
                     type: 'circle',
-                    radius: 1000,
+                    radius: 0,
                     latlngs: {
                         lat: 50.8333,
                         lng: 4
@@ -60,12 +95,6 @@
             }
         };
 
-        navigator.geolocation.getCurrentPosition(function(geoposition){
-            $scope.location.markers.location.lng = geoposition.coords.longitude;
-            $scope.location.markers.location.lat = geoposition.coords.latitude;
-            $scope.$apply();
-        });
-
         $scope.$watch('location.slider.value', (value) => {
             $scope.location.paths.radius.radius = translateTo(value);
         });
@@ -75,16 +104,46 @@
         }
 
         function translateFrom(value) {
-            return Math.round(Math.sqrt(value) / 15);
+            return Math.round(Math.sqrt(value  / 15));
         }
 
         // Drag circle to marker.
         $scope.$on('leafletDirectiveMarker.move', (event, args) => {
-            var latlng = args.leafletEvent.latlng;
+            var geo = args.leafletEvent.latlng;
             $scope.location.paths.radius.latlngs = {
-                lat: latlng.lat,
-                lng: latlng.lng
+                lat: geo.lat,
+                lng: geo.lng
             };
+            if ($scope.settings) {
+                $scope.settings.geolat = geo.lat;
+                $scope.settings.geolon = geo.lng;
+            }
         });
+
+        // Bind checkbox and marker.
+        $scope.$watch('settings.geolocation', (value) => {
+            if (value !== undefined) {
+                let marker = $scope.location.markers.location;
+                if (value) {
+                    Geo().then(([geolat, geolon]) => {
+                        if (value) {
+                            marker.draggable = false;
+                            marker.lat = geolat;
+                            marker.lng = geolon;
+                            $scope.$apply();
+                        }
+                    });
+                } else {
+                    marker.draggable = true;
+                    marker.lat = $scope.settings.geolat;
+                    marker.lng = $scope.settings.geolon;
+                }
+            }
+        });
+
+        // Save settings.
+        $scope.save = () => {
+            SettingsStore.settings = $scope.settings;
+        };
     });
 })(App);
