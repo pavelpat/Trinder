@@ -1,7 +1,7 @@
-((App) => {
+((ng, App) => {
     'use strict';
 
-    App.factory('MatchesCache', (Store) => new class MatchesCache {
+    App.factory('MatchesCache', (Store, MatchModel) => new class MatchesCache {
         constructor() {
             this.store = new Store('Cache');
         }
@@ -36,12 +36,22 @@
             this.store.set('activity', value.toISOString());
         }
 
+        /**
+         * @returns {*|Promise.<Array<MatchModel>>}
+         */
         get matches() {
-            return this.store.get('matches').catch(() => []);
+            return this.store.get('matches').then(
+                (matches) => matches.map((v) => new MatchModel(v)),
+                () => []
+            );
         }
 
+        //noinspection JSAnnotator
+        /**
+         * @param {Array<MatchModel>} value
+         */
         set matches(value) {
-            this.store.set('matches', value);
+            this.store.set('matches', value.map((v) => v.toObject()));
         }
 
         reset() {
@@ -121,9 +131,11 @@
              * @param {Array<MatchModel>} fetched
              */
             function merge(cached, fetched) {
+                let results = ng.copy(cached);
+
                 // There is already ordered data in cache.
                 if (!fetched.length) {
-                    return cached;
+                    return results;
                 }
 
                 // Merge matches items with order.
@@ -132,22 +144,24 @@
                     match.messages.sort((a, b) => b.sent - a.sent);
 
                     // Insert match to correct place.
-                    if (cached.length) {
-                        var replaced = false;
+                    if (results.length) {
+                        let merged = false;
 
-                        // Replace existent match.
-                        for (var i = 0; i < cached.length; i++) {
-                            if (match.id == cached[i].id) {
-                                cached[i] = match;
-                                replaced = true;
-                                break;
+                        // Merge match.
+                        for (let result of results) if (result.id == match.id) {
+                            for (let attr of ['activity', 'person', 'messages']) {
+                                if (match[attr]) {
+                                    result[attr] = match[attr];
+                                }
                             }
+                            merged = true;
+                            break;
                         }
 
                         // Insert new match.
-                        if (!replaced) for (var j = 0; j < cached.length; j++) {
-                            var currCachedActivity = cached[j].activity,
-                                prevCachedActivity = (j != 0) ? cached[j - 1].activity : null;
+                        if (!merged) for (var j = 0; j < results.length; j++) {
+                            var currCachedActivity = results[j].activity,
+                                prevCachedActivity = (j != 0) ? results[j - 1].activity : null;
 
                             if (
                                 // Merge first element.
@@ -156,23 +170,23 @@
                                 // Merge middle element.
                                 (match.activity > currCachedActivity && match.activity <= prevCachedActivity)
                             ) {
-                                cached.splice(j, 0, match);
+                                results.splice(j, 0, match);
                                 break;
                             } else if (
                                 // Merge last element.
-                                match.activity < currCachedActivity && j == cached.length - 1
+                                match.activity < currCachedActivity && j == results.length - 1
                             ) {
-                                cached.splice(j + 1, 0, match);
+                                results.splice(j + 1, 0, match);
                                 break;
                             }
                         }
                     } else {
-                        cached.push(match);
+                        results.push(match);
                     }
                 }
 
-                return cached;
+                return results;
             }
         }
     });
-})(App);
+})(angular, App);
