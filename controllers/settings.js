@@ -94,12 +94,6 @@
             }
         };
 
-        if ($scope.user !== null) {
-            let distance = $scope.user.distance * 1000 * 1.60934;
-            $scope.location.paths.radius.radius = distance;
-            $scope.location.slider.value = translateFrom(distance);
-        }
-
         $scope.$watch('location.slider.value', (value) => {
             $scope.location.paths.radius.radius = translateTo(value);
         });
