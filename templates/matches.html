@@ -42,7 +42,7 @@
                 ng-repeat="message in active.messages" ng-if="active">
                 <div class="matches__messages-item-left">
                     <div class="matches__messages-item-left-from">
-                        {{ message.from == active.person.id ? active.person.name : person.name }}
+                        {{ message.from == active.person.id ? active.person.name : user.name }}
                     </div>
                     <div class="matches__messages-item-left-date">
                         {{ message.sent.toLocaleString() }}

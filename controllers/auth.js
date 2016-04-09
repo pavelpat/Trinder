@@ -3,18 +3,18 @@
 
     App.run(function($rootScope, Auth, Client) {
         $rootScope.client = null;
-        $rootScope.person = null;
+        $rootScope.user = null;
 
         Auth.auth().then((credentials) => new Promise((resolve, reject) => {
             var client = new Client(credentials.id, credentials.token);
-            client.auth().then((person) => {
-                resolve([client, person]);
+            client.auth().then((user) => {
+                resolve([client, user]);
             }, (e) => {
                 reject('Could not authenticate: ' + e)
             });
-        })).then(([client, person]) => {
+        })).then(([client, user]) => {
             $rootScope.client = client;
-            $rootScope.person = person;
+            $rootScope.user = user;
             $rootScope.$apply();
         });
     });
