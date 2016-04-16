@@ -27,7 +27,7 @@
                 SettingsStore.settings.then((settings) => {
                     if (settings.geolocation) {
                         // Browser selected location.
-                        Geo().then((args) => {
+                        Geo.position().then((args) => {
                             let geolat = args[0],
                                 geolon = args[1];
                             client.ping(geolat, geolon).then(() => {

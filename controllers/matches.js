@@ -1,5 +1,14 @@
 ((ng, App) => {
     'use strict';
+    
+    App.config(($stateProvider) => {
+        $stateProvider.state('matches', {
+            url: '/matches',
+            reload: false,
+            controller: 'MatchesController',
+            templateUrl: 'templates/matches.html'
+        });
+    });
 
     App.factory('MatchesStore', (Store, MatchModel) => new class MatchesStore {
         constructor() {

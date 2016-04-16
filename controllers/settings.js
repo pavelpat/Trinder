@@ -1,6 +1,15 @@
 ((App) => {
     'use strict';
 
+    App.config(($stateProvider) => {
+        $stateProvider.state('settings', {
+            url: '/settings',
+            reload: false,
+            controller: 'SettingsController',
+            templateUrl: 'templates/settings.html'
+        });
+    });
+
     App.value('DefaultSettings', {
         'geolocation': true,
         'geolat': 51.5,
@@ -50,7 +59,7 @@
         $scope.location = {
             defaults: {
                 minZoom: 2,
-                maxZoom: 12,
+                maxZoom: 15,
                 doubleClickZoom: true,
                 scrollWheelZoom: true,
                 attributionControl: true,

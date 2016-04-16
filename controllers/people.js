@@ -1,6 +1,15 @@
 ((App) => {
     'use strict';
 
+    App.config(($stateProvider) => {
+        $stateProvider.state('people', {
+            url: '/people',
+            reload: false,
+            controller: 'PeopleController',
+            templateUrl: 'templates/people.html'
+        });
+    });
+
     App.controller('PeopleController', function ($scope) {
         $scope.$watch('client', (value) => {
             if (value !== null) {
