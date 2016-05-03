@@ -3,7 +3,6 @@
   src: url('fonts/NotoColorEmoji/NotoColorEmoji.ttf') format('truetype');
 }
 
-
 html, body, html.fancybox-lock, html.fancybox-lock, .fancybox-overlay {
     overflow: auto !important;
 }
@@ -15,6 +14,10 @@ body {
 .layout {
     background: #f1f1f1;
     font-family: Arial, sans-serif, 'Noto Color Emoji';
+}
+
+.layout a:hover {
+    text-decoration: none;
 }
 
 .layout .container {
