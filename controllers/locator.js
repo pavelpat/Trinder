@@ -44,7 +44,7 @@
 
                 defaultPos().then((pos) => {
                     // Jump to default point.
-                    return jump(pos[0], pos[1]).then(() => {
+                    return client.ping(pos[0], pos[1]).then(() => {
                         return client.person(id).then((person) => {
                             $scope.location.paths.r1 = {
                                 type: 'circle',
@@ -52,12 +52,12 @@
                                 latlngs: {lat: pos[0], lng: pos[1]}
                             };
                             $scope.$apply();
-                            return [pos[0], pos[1] + person.distance * 3 / 111.3];
+                            return [pos[0], pos[1] + (10) / 111.3];
                         });
                     });
                 }).then((pos) => {
                     // Jump to second point.
-                    return jump(pos[0], pos[1]).then(() => {
+                    return client.ping(pos[0], pos[1]).then(() => {
                         return client.person(id).then((person) => {
                             $scope.location.paths.r2 = {
                                 type: 'circle',
@@ -65,12 +65,13 @@
                                 latlngs: {lat: pos[0], lng: pos[1]}
                             };
                             $scope.$apply();
-                            return [pos[0] + person.distance * 3 / 111, pos[1]];
+
+                            return [pos[0] + (10) / 111, pos[1]];
                         });
                     });
                 }).then((pos) => {
                     // Jump to third point.
-                    return jump(pos[0], pos[1]).then(() => {
+                    return client.ping(pos[0], pos[1]).then(() => {
                         return client.person(id).then((person) => {
                             $scope.location.paths.r3 = {
                                 type: 'circle',
@@ -82,7 +83,7 @@
                     });
                 }).then(() => {
                     // Restore default point.
-                    defaultPos().then((pos) => jump(pos[0], pos[1]));
+                    defaultPos().then((pos) => client.ping(pos[0], pos[1]));
                 })
             };
 
@@ -91,14 +92,6 @@
                     $scope.detect($stateParams.personId);
                 }
             });
-
-            function jump(lat, lon) {
-                var client = $scope.client;
-                // Change location sensitive (but not major).
-                return client.ping(lat + 0.000001, lon + 0.000001).then(() => () => {
-                    return client.ping(lat, lon);
-                });
-            }
 
             function defaultPos() {
                 return SettingsStore.settings.then((settings) => {
