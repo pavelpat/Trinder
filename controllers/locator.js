@@ -52,7 +52,7 @@
                                 latlngs: {lat: pos[0], lng: pos[1]}
                             };
                             $scope.$apply();
-                            return [pos[0], pos[1] + (10) / 111.3];
+                            return [pos[0], pos[1] + (20) / 111.3];
                         });
                     });
                 }).then((pos) => {
@@ -66,7 +66,7 @@
                             };
                             $scope.$apply();
 
-                            return [pos[0] + (10) / 111, pos[1]];
+                            return [pos[0] - (10) / 111, pos[1]];
                         });
                     });
                 }).then((pos) => {
@@ -74,6 +74,19 @@
                     return client.ping(pos[0], pos[1]).then(() => {
                         return client.person(id).then((person) => {
                             $scope.location.paths.r3 = {
+                                type: 'circle',
+                                radius: person.distance * 1000,
+                                latlngs: {lat: pos[0], lng: pos[1]}
+                            };
+                            $scope.$apply();
+                            return [pos[0], pos[1] - (20) / 111.3];
+                        });
+                    });
+                }).then((pos) => {
+                    // Jump to forth point.
+                    return client.ping(pos[0], pos[1]).then(() => {
+                        return client.person(id).then((person) => {
+                            $scope.location.paths.r4 = {
                                 type: 'circle',
                                 radius: person.distance * 1000,
                                 latlngs: {lat: pos[0], lng: pos[1]}
