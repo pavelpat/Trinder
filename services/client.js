@@ -33,7 +33,7 @@
                 return this._post('user/ping', {
                     'lat': lat,
                     'lon': lon
-                });
+                }).then((result) => !result['error']);
             }
 
             person(id) {

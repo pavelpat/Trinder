@@ -38,66 +38,44 @@
             };
 
             $scope.detect = (id) => {
-                var client = $scope.client;
+                let client = $scope.client,
+                    precision = 25,
+                    points = [
+                        [0, 0],
+                        [0, 60 / 111.3],
+                        [-30 / 111, 30 / 111.3]
+                    ];
 
                 $scope.location.paths = {};
 
                 defaultPos().then((pos) => {
-                    // Jump to default point.
-                    return client.ping(pos[0], pos[1]).then(() => {
-                        return client.person(id).then((person) => {
-                            $scope.location.paths.r1 = {
-                                type: 'circle',
-                                radius: person.distance * 1000,
-                                latlngs: {lat: pos[0], lng: pos[1]}
-                            };
-                            $scope.$apply();
-                            return [pos[0], pos[1] + (20) / 111.3];
+                    // Jump to all view points and measure distances;
+                    let promise = new Promise((resolve) => resolve([]));
+                    for (let i = 0; i < points.length; i++) {
+                        promise = promise.then((results) => {
+                            return predictDistance(
+                                id, pos[0] + points[i][0], pos[1] + points[i][1], precision
+                            ).then((distance) => results.concat([distance]));
                         });
-                    });
-                }).then((pos) => {
-                    // Jump to second point.
-                    return client.ping(pos[0], pos[1]).then(() => {
-                        return client.person(id).then((person) => {
-                            $scope.location.paths.r2 = {
-                                type: 'circle',
-                                radius: person.distance * 1000,
-                                latlngs: {lat: pos[0], lng: pos[1]}
-                            };
-                            $scope.$apply();
-
-                            return [pos[0] - (10) / 111, pos[1]];
-                        });
-                    });
-                }).then((pos) => {
-                    // Jump to third point.
-                    return client.ping(pos[0], pos[1]).then(() => {
-                        return client.person(id).then((person) => {
-                            $scope.location.paths.r3 = {
-                                type: 'circle',
-                                radius: person.distance * 1000,
-                                latlngs: {lat: pos[0], lng: pos[1]}
-                            };
-                            $scope.$apply();
-                            return [pos[0], pos[1] - (20) / 111.3];
-                        });
-                    });
-                }).then((pos) => {
-                    // Jump to forth point.
-                    return client.ping(pos[0], pos[1]).then(() => {
-                        return client.person(id).then((person) => {
-                            $scope.location.paths.r4 = {
-                                type: 'circle',
-                                radius: person.distance * 1000,
-                                latlngs: {lat: pos[0], lng: pos[1]}
-                            };
-                            $scope.$apply();
-                        });
-                    });
+                    }
+                    return promise;
+                }).then((results) => {
+                    // Show results.
+                    for (let i = 0; i < results.length; i++) {
+                        $scope.location.paths['r' + i] = {
+                            type: 'circle',
+                            radius: results[i].distance,
+                            latlngs: {
+                                lat: results[i].lat,
+                                lng: results[i].lng
+                            }
+                        };
+                        $scope.$apply();
+                    }
                 }).then(() => {
                     // Restore default point.
                     defaultPos().then((pos) => client.ping(pos[0], pos[1]));
-                })
+                });
             };
 
             $scope.$watch('client', (value) => {
@@ -105,6 +83,64 @@
                     $scope.detect($stateParams.personId);
                 }
             });
+
+            function predictDistance(id, lat, lng, precision) {
+                // Start jumping down.
+                return (new Promise((resolve) => {
+                    (function recurse(distance) {
+                        // When distance changes change direction and width of rectification.
+                        if (distance.distance != distance.previous && distance.previous != 0) {
+                            distance.rivals = [distance.distance, distance.previous];
+                            distance.forward = !distance.forward;
+                            distance.rectifn *= 0.5;
+                        }
+
+                        // Change lat with known width of clarification into known direction.
+                        distance.lat += (distance.forward ? 1 :-1) * distance.rectifn * (1 / (40000000 / 360));
+
+                        // Measure distance to target from new point.
+                        return measureFrom(id, distance.lat, distance.lng).then((measured) => {
+                            // Jump and measure again if precision is not satisfied.
+                            ((distance.rectifn > precision) ? recurse : resolve)({
+                                lat: distance.lat,
+                                lng: distance.lng,
+                                rectifn: distance.rectifn,
+                                forward: distance.forward,
+                                rivals: distance.rivals,
+                                previous: distance.distance,
+                                distance: measured
+                            });
+                        });
+                    })({
+                        lat: lat,
+                        lng: lng,
+                        rectifn: 5000,
+                        forward: true,
+                        rivals: [],
+                        previous: 0,
+                        distance: 0
+                    });
+                })).then((distance) => {
+                    // Distance is rounded value in miles.
+                    return {
+                        lat: distance.lat,
+                        lng: distance.lng,
+                        distance: Math.min(distance.rivals[0], distance.rivals[1]) * 1000 * 1.60934
+                    };
+                });
+            }
+
+            function measureFrom(id, lat, lng) {
+                let client = $scope.client;
+
+                return client.ping(lat - 0.05, lng - 0.05).then(() => {
+                    return client.ping(lat, lng);
+                }).then(() => {
+                    return client.person(id);
+                }).then((person) => {
+                    return person.distance;
+                });
+            }
 
             function defaultPos() {
                 return SettingsStore.settings.then((settings) => {
