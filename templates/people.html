@@ -1,10 +1,11 @@
-<div class="preloader" ng-show="!client || loading"></div>
+<div class="preloader" ng-show="!client"></div>
 <ng-photoswipe open="gallery.shown" on-close="gallery.close()"
     slides="gallery.slides" options="gallery.options"
     template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
 <div class="people">
+    <div class="layout__block layout__loader" ng-show="loading"></div>
     <div class="people__person layout__block"
-        ng-repeat="person in people">
+        ng-repeat="person in people" ng-class="{'layout__loader-inner': voting}">
         <div class="people__person-name">{{ person.name }}</div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">

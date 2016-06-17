@@ -37,6 +37,22 @@ body {
     margin: 20px 0;
 }
 
+.layout__loader {
+    background: 50% 50% no-repeat url('images/ajax-loader.gif') #FFF;
+    min-height: 280px;
+}
+
+.layout__loader-inner:before {
+    background: 50% 50% no-repeat url('images/ajax-loader.gif') rgba(255, 255, 255, 0.8);
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
 .layout__menus .navbar-right {
     margin: 0;
 }

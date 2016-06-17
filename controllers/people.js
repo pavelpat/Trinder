@@ -20,33 +20,34 @@
         // Main section.
         $scope.people = [];
         $scope.loading = false;
+        $scope.voting = false;
 
         $scope.like = (person) => {
-            $scope.loading = true;
+            $scope.voting = true;
             $scope.client.like(person.id).then(() => {
                 var index = $scope.people.indexOf(person);
                 if (index > -1) {
                     $scope.people.splice(index, 1);
                 }
-                $scope.loading = false;
+                $scope.voting = false;
                 $scope.$apply();
             }, () => {
-                $scope.loading = false;
+                $scope.voting = false;
                 $scope.$apply();
             })
         };
 
         $scope.pass = (person) => {
-            $scope.loading = true;
+            $scope.voting = true;
             $scope.client.pass(person.id).then(() => {
                 var index = $scope.people.indexOf(person);
                 if (index > -1) {
                     $scope.people.splice(index, 1);
                 }
-                $scope.loading = false;
+                $scope.voting = false;
                 $scope.$apply();
             }, () => {
-                $scope.loading = false;
+                $scope.voting = false;
                 $scope.$apply();
             })
         };
