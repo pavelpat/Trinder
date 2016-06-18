@@ -28,12 +28,15 @@
                 var index = $scope.people.indexOf(person);
                 if (index > -1) {
                     $scope.people.splice(index, 1);
+                    if (!$scope.people.length) {
+                        $scope.refresh();
+                    }
                 }
                 $scope.voting = false;
                 $scope.$apply();
             }, () => {
                 $scope.voting = false;
-                $scope.$apply();
+                $scope.$apply();reload
             })
         };
 
@@ -43,6 +46,9 @@
                 var index = $scope.people.indexOf(person);
                 if (index > -1) {
                     $scope.people.splice(index, 1);
+                    if (!$scope.people.length) {
+                        $scope.refresh();
+                    }
                 }
                 $scope.voting = false;
                 $scope.$apply();
