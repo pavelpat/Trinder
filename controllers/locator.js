@@ -39,12 +39,13 @@
 
             $scope.detect = (id) => {
                 let client = $scope.client,
-                    precision = 25,
                     points = [
                         [0, 0],
                         [0, 60 / 111.3],
                         [-30 / 111, 30 / 111.3]
-                    ];
+                    ],
+                    precn = 100,
+                    limit = 25;
 
                 $scope.location.paths = {};
 
@@ -54,7 +55,7 @@
                     for (let i = 0; i < points.length; i++) {
                         promise = promise.then((results) => {
                             return predictDistance(
-                                id, pos[0] + points[i][0], pos[1] + points[i][1], precision
+                                id, pos[0] + points[i][0], pos[1] + points[i][1], precn, limit
                             ).then((distance) => results.concat([distance]));
                         });
                     }
@@ -84,10 +85,14 @@
                 }
             });
 
-            function predictDistance(id, lat, lng, precision) {
+            function predictDistance(id, lat, lng, precn, limit) {
                 // Start jumping down.
                 return (new Promise((resolve) => {
                     (function recurse(distance) {
+                        if (distance.distance && !distance.rivals.length) {
+                            distance.rivals = [distance.distance, distance.distance];
+                        }
+
                         // When distance changes change direction and width of rectification.
                         if (distance.distance != distance.previous && distance.previous != 0) {
                             distance.rivals = [distance.distance, distance.previous];
@@ -97,18 +102,20 @@
 
                         // Change lat with known width of clarification into known direction.
                         distance.lat += (distance.forward ? 1 :-1) * distance.rectifn * (1 / (40000000 / 360));
+                        distance.limit -= 1;
 
                         // Measure distance to target from new point.
                         return measureFrom(id, distance.lat, distance.lng).then((measured) => {
                             // Jump and measure again if precision is not satisfied.
-                            ((distance.rectifn > precision) ? recurse : resolve)({
+                            ((distance.rectifn > precn && distance.limit) ? recurse : resolve)({
                                 lat: distance.lat,
                                 lng: distance.lng,
                                 rectifn: distance.rectifn,
                                 forward: distance.forward,
                                 rivals: distance.rivals,
                                 previous: distance.distance,
-                                distance: measured
+                                distance: measured,
+                                limit: distance.limit
                             });
                         });
                     })({
@@ -118,7 +125,8 @@
                         forward: true,
                         rivals: [],
                         previous: 0,
-                        distance: 0
+                        distance: 0,
+                        limit: limit
                     });
                 })).then((distance) => {
                     // Distance is rounded value in miles.
