@@ -1,4 +1,4 @@
-((App) => {
+((App, window) => {
     'use strict';
 
     App.run(function($rootScope, Auth, Client, Geo, SettingsStore) {
@@ -8,6 +8,9 @@
         Auth.auth().then((credentials) => new Promise((resolve, reject) => {
             let client = new Client(credentials.id, credentials.token);
             client.auth().then((user) => {
+                // Export client.
+                window.client = client;
+
                 geolocation(client).then(() => {
                     resolve([client, user]);
                 });
@@ -44,4 +47,4 @@
             });
         }
     });
-})(App);
+})(App, window);

@@ -3,7 +3,11 @@
   src: url('fonts/NotoColorEmoji/NotoColorEmoji.ttf') format('truetype');
 }
 
-html, body, html.fancybox-lock, html.fancybox-lock, .fancybox-overlay {
+html {
+    overflow-y: scroll !important;
+}
+
+body, html.fancybox-lock, html.fancybox-lock, .fancybox-overlay {
     overflow: auto !important;
 }
 
@@ -37,9 +41,36 @@ body {
     margin: 20px 0;
 }
 
+.layout__menus {
+    background: #507299;
+    border: 0 none;
+}
+
+.layout__menus a {
+    color: #CCC !important;
+    background: transparent !important;
+}
+
+.layout__menus .active a {
+    color: #FFF !important;
+}
+
+.layout__menus .navbar-brand {
+    color: #FFF !important;
+}
+
 .layout__loader {
     background: 50% 50% no-repeat url('images/ajax-loader.gif') #FFF;
-    min-height: 280px;
+}
+
+.layout__loader-over {
+    background: 50% 50% no-repeat url('images/ajax-loader.gif') rgba(241, 241, 241, 0.8);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
 }
 
 .layout__loader-inner:before {
@@ -55,16 +86,6 @@ body {
 
 .layout__menus .navbar-right {
     margin: 0;
-}
-
-.preloader {
-    background: 50% 50% no-repeat url('images/ajax-loader.gif') rgba(127, 127, 127, 0.5);
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 100;
 }
 
 .people {
