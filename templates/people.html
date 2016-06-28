@@ -6,7 +6,7 @@
     <div class="layout__block layout__loader" ng-show="loading"></div>
     <div class="people__person layout__block"
         ng-repeat="person in people" ng-class="{'layout__loader-inner': voting}">
-        <div class="people__person-name">{{ person.name }}</div>
+        <div class="people__person-name">{{ person.name }}<span ng-if="person.birth">, {{ ageText(person.birth) }}</span></div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">
             <div ng-repeat="photo in person.photos | limitTo : 5" ng-init="index = $index">

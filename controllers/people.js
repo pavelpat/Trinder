@@ -36,7 +36,7 @@
                 $scope.$apply();
             }, () => {
                 $scope.voting = false;
-                $scope.$apply();reload
+                $scope.$apply();
             })
         };
 
@@ -70,5 +70,10 @@
                 $scope.$apply();
             });
         };
+
+        $scope.ageText = (birth) => {
+            let age = (new Date()).getYear() - birth.getYear();
+            return age + ' years';
+        }
     });
 })(App);

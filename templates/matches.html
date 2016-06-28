@@ -12,7 +12,7 @@
                  ng-if="processed.width == 84"
                  ng-click="gallery.open(match.person.photos, 0)">
             <div class="matches__list-item-name" title="{{ match.person.name }}">
-                {{ match.person.name }}
+                {{ match.person.name }}, {{ ageText(match.person.birth) }}
                 <a href="#" ui-sref="locator({personId: match.person.id})">&#8605;</a>
             </div>
             <div class="matches__list-item-bio" title="{{ match.person.bio }}">

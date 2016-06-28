@@ -156,6 +156,10 @@
                 // Sort matches.
                 return results.sort((a, b) => b.activity - a.activity);
             }
+
+            $scope.ageText = (birth) => {
+                return (new Date()).getYear() - birth.getYear();
+            }
         }
     });
 })(angular, App);
