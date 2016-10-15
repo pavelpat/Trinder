@@ -136,6 +136,44 @@ body {
     height: 172px;
 }
 
+.match {
+    position: fixed;
+    background: #507299;
+    right: 100px;
+    color: white;
+    padding: 10px 20px;
+    font-size: 140%;
+    box-shadow: 3px 3px 7px 0 #92b6d4;
+
+    bottom: 20px;
+    opacity: 1;
+
+    transition: all .1s linear;
+}
+
+.match.ng-animate {
+    transition: all .1s linear;
+}
+
+.match.ng-enter {
+    bottom: -50px;
+    opacity: 0;
+}
+
+.match.ng-enter.ng-enter-active {
+    bottom: 20px;
+    opacity: 1;
+}
+
+.match.ng-leave {
+    opacity: 1;
+}
+
+.match.ng-leave.ng-leave-active {
+    bottom: 20px;
+    opacity: 0;
+}
+
 .matches {
 
 }

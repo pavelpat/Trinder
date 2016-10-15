@@ -2,6 +2,7 @@ App = (function (window, angular) {
     'use strict';
 
     var app = angular.module('trinder', [
+        'ngAnimate',
         'ui.router',
         'ngPhotoswipe',
         'leaflet-directive',

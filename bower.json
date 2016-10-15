@@ -23,6 +23,7 @@
     "bootstrap": "^3.3.6",
     "ng-photoswipe": "^0.0.9",
     "angular-leaflet-directive": "^0.10.0",
-    "angularjs-slider": "^2.11.0"
+    "angularjs-slider": "^2.11.0",
+    "angular-animate": "^1.5.8"
   }
 }
