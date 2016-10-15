@@ -42,7 +42,7 @@
             </h2>
         </div>
         <ul class="matches__messages">
-            <li class="matches__messages-item"
+            <li id="message-{{ message.id }}" class="matches__messages-item"
                 ng-repeat="message in active.messages" ng-if="active">
                 <img class="matches__messages-item-photo" src="{{ processed.url }}"
                     ng-repeat="processed in (message.from == active.person.id ? active.person.photos[0].processed : user.photos[0].processed)"

@@ -15,6 +15,20 @@ body {
     padding-top: 70px;
 }
 
+::-webkit-scrollbar {
+	background-color: #F5F5F5;
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: #F5F5F5;
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #889cb2;
+}
+
 .btn {
     border-radius: 0;
 }
@@ -229,7 +243,7 @@ body {
 }
 
 .matches__messages {
-    overflow-y: scroll;
+    overflow-y: auto;
     flex-grow: 1;
     padding: 0;
 }
