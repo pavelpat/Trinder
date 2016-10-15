@@ -47,6 +47,7 @@
                     precn = 100,
                     limit = 25;
 
+                $scope.detected = false;
                 $scope.location.paths = {};
 
                 defaultPos().then((pos) => {
@@ -63,6 +64,7 @@
                 }).then((results) => {
                     // Show results.
                     for (let i = 0; i < results.length; i++) {
+                        $scope.detected = true;
                         $scope.location.paths['r' + i] = {
                             type: 'circle',
                             radius: results[i].distance,
