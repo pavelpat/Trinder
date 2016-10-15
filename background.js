@@ -28,6 +28,7 @@ function injectInterceptor(info) {
 
     // Create interceptor.
     let code = (
+        '\\\'use strict\\\';' +
         'AsyncRequest.prototype._handleJSResponseOrig = AsyncRequest.prototype._handleJSResponse;' +
         'AsyncRequest.prototype._handleJSResponse = function(value) {' +
         '    if (value.jsmods && value.jsmods.require && value.jsmods.require.length) {' +
@@ -46,6 +47,7 @@ function injectInterceptor(info) {
     // Inject interceptor.
     chrome.tabs.executeScript(info.tabId, {
         code: (
+            '\'use strict\';' +
             'let element = window.document.createElement(\'script\');' +
             'element.innerHTML = \'' + code + '\';' +
             'window.document.head.appendChild(element);'
