@@ -122,6 +122,7 @@ body {
     bottom: 0;
     display: flex;
     justify-content: space-between;
+    z-index: -1;
 }
 
 .people__person-buttons-pass {
