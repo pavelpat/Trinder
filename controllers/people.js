@@ -13,11 +13,10 @@
     App.controller('PeopleController', class PeopleController {
         /**
          * @param $scope
-         * @param $timeout
          * @param $rootScope
          * @param $window
          */
-        constructor($scope, $timeout, $rootScope, $window) {
+        constructor($scope, $rootScope, $window) {
             $scope.$watch('client', (value) => {
                 if (value !== null) {
                     $scope.refresh();
@@ -41,34 +40,29 @@
             $scope.matched = false;
 
             $scope.like = (person) => {
-                $scope.client.like(person.id).then((result) => {
-                    if (result.match) {
-                        $scope.matched = true;
-                        $timeout(() => {
-                            $scope.matched = false;
-                        }, 1000);
-                    }
-
-                    let index = $scope.people.indexOf(person);
-                    if (index > -1) {
-                        $scope.people.splice(index, 1);
-                        if (!$scope.people.length) {
-                            $scope.refresh();
-                        }
-                    }
-                    delete $scope.voting[person.id];
-                    $scope.$apply();
-                }, () => {
-                    delete $scope.voting[person.id];
-                    $scope.$apply();
+                let action = 'like';
+                $scope.react(action, person).then(() => {
+                    $scope.history(action, person);
                 });
-
-                $scope.voting[person.id] = true;
-                $scope.$apply();
             };
 
             $scope.pass = (person) => {
-                $scope.client.pass(person.id).then(() => {
+                let action = 'pass';
+                $scope.react(action, person).then(() => {
+                    $scope.history(action, person);
+                });
+            };
+
+            $scope.react = (action, person) => {
+                $scope.voting[person.id] = true;
+                $scope.$apply();
+
+                let reactor = {
+                    'like': $scope.client.like,
+                    'pass': $scope.client.pass
+                }[action].bind($scope.client);
+
+                return reactor(person.id).then(() => {
                     let index = $scope.people.indexOf(person);
                     if (index > -1) {
                         $scope.people.splice(index, 1);
@@ -82,9 +76,6 @@
                     delete $scope.voting[person.id];
                     $scope.$apply();
                 });
-
-                $scope.voting[person.id] = true;
-                $scope.$apply();
             };
 
             $scope.refresh = () => {
