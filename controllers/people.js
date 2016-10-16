@@ -26,7 +26,8 @@
             // Listen for key events until state leaving.
             $window.onkeydown = (event) => {
                 let handlerName = 'onKeyDown' + event.keyCode;
-                $scope[handlerName] && $scope[handlerName](event);
+                let galleryShown = $rootScope.gallery.shown;
+                $scope[handlerName] && !galleryShown &&  $scope[handlerName](event);
             };
             let listenOff = $rootScope.$on('$stateChangeSuccess', () => {
                 $window.onkeydown = null;
