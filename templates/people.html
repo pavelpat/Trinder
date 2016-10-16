@@ -5,7 +5,17 @@
 <div class="people">
     <div class="layout__block layout__loader" ng-show="loading"></div>
     <div class="people__person layout__block"
-        ng-repeat="person in people" ng-class="{'layout__loader-inner': voting}">
+        ng-repeat="person in people" ng-class="{'layout__loader-inner': voting[person.id]}">
+        <div ng-if="$first" class="people__person-buttons">
+            <div class="people__person-buttons-pass">
+                <span class="people__person-buttons-arrow">&#10229;</span>
+                <span class="people__person-buttons-text">Pass</span>
+            </div>
+            <div class="people__person-buttons-like">
+                <span class="people__person-buttons-arrow">&#10230;</span>
+                <span class="people__person-buttons-text">Like</span>
+            </div>
+        </div>
         <div class="people__person-name">{{ person.name }}<span ng-if="person.birth">, {{ ageText(person.birth) }}</span></div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">
@@ -16,8 +26,8 @@
                      ng-if="processed.width == 172">
             </div>
         </div>
-        <button class="btn btn-danger" ng-click="pass(person)">Dislike</button>
+        <button class="btn btn-danger" ng-click="pass(person)">Pass</button>
         <button class="btn btn-primary" ng-click="like(person)">Like</button>
     </div>
 </div>
-<div class="match" ng-if="match">Got new match!</div>
+<div class="match" ng-if="matched">Got new match!</div>

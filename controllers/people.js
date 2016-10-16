@@ -14,27 +14,38 @@
         /**
          * @param $scope
          * @param $timeout
+         * @param $rootScope
+         * @param $window
          */
-        constructor($scope, $timeout) {
+        constructor($scope, $timeout, $rootScope, $window) {
             $scope.$watch('client', (value) => {
                 if (value !== null) {
                     $scope.refresh();
                 }
             });
 
+            // Listen for key events until state leaving.
+            $window.onkeydown = (event) => {
+                let handlerName = 'onKeyDown' + event.keyCode;
+                $scope[handlerName] && $scope[handlerName](event);
+            };
+            let listenOff = $rootScope.$on('$stateChangeSuccess', () => {
+                $window.onkeydown = null;
+                listenOff();
+            });
+
             // Main section.
             $scope.people = [];
+            $scope.voting = {};
             $scope.loading = false;
-            $scope.voting = false;
-            $scope.match = false;
+            $scope.matched = false;
 
             $scope.like = (person) => {
-                $scope.voting = true;
                 $scope.client.like(person.id).then((result) => {
                     if (result.match) {
-                        $scope.match = true;
+                        $scope.matched = true;
                         $timeout(() => {
-                            $scope.match = false;
+                            $scope.matched = false;
                         }, 1000);
                     }
 
@@ -45,16 +56,18 @@
                             $scope.refresh();
                         }
                     }
-                    $scope.voting = false;
+                    delete $scope.voting[person.id];
                     $scope.$apply();
                 }, () => {
-                    $scope.voting = false;
+                    delete $scope.voting[person.id];
                     $scope.$apply();
-                })
+                });
+
+                $scope.voting[person.id] = true;
+                $scope.$apply();
             };
 
             $scope.pass = (person) => {
-                $scope.voting = true;
                 $scope.client.pass(person.id).then(() => {
                     let index = $scope.people.indexOf(person);
                     if (index > -1) {
@@ -63,12 +76,15 @@
                             $scope.refresh();
                         }
                     }
-                    $scope.voting = false;
+                    delete $scope.voting[person.id];
                     $scope.$apply();
                 }, () => {
-                    $scope.voting = false;
+                    delete $scope.voting[person.id];
                     $scope.$apply();
-                })
+                });
+
+                $scope.voting[person.id] = true;
+                $scope.$apply();
             };
 
             $scope.refresh = () => {
@@ -87,7 +103,19 @@
             $scope.ageText = (birth) => {
                 let age = (new Date()).getYear() - birth.getYear();
                 return age + ' years';
-            }
+            };
+
+            $scope.onKeyDown37 = (event) => {
+                if ($scope.people.length && !$scope.voting[$scope.people[0].id]) {
+                    $scope.pass($scope.people[0]);
+                }
+            };
+
+            $scope.onKeyDown39 = (event) => {
+                if ($scope.people.length && !$scope.voting[$scope.people[0].id]) {
+                    $scope.like($scope.people[0]);
+                }
+            };
         }
     });
 })(App);

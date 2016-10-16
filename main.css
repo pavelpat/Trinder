@@ -114,6 +114,43 @@ body {
     position: relative;
 }
 
+.people__person-buttons {
+    position: absolute;
+    left: -100px;
+    top: 0;
+    right: -100px;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.people__person-buttons-pass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.people__person-buttons-like {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.people__person-buttons-arrow {
+    display: block;
+    color: #B9B9B9;
+    font-size: 410%;
+    line-height: 50%;
+}
+
+.people__person-buttons-text {
+    display: block;
+    color: #B9B9B9;
+    font-size: 300%;
+}
+
 .people__person-name {
     font-size: 140%;
 }
