@@ -29,7 +29,7 @@
             $window.onkeydown = (event) => {
                 let handlerName = 'onKeyDown' + event.keyCode;
                 let galleryOpen = $rootScope.gallery.shown;
-                $scope[handlerName] && !galleryOpen &&  $scope[handlerName](event);
+                $scope[handlerName] && !galleryOpen && $scope[handlerName](event);
             };
             let listenOff = $rootScope.$on('$stateChangeSuccess', () => {
                 $window.onkeydown = null;
