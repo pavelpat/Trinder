@@ -380,3 +380,48 @@ body {
     width: 15%;
     margin: 0;
 }
+
+.history {}
+
+.history__action {
+    display: flex;
+}
+
+.history__action-action {
+    width: 90px;
+    display: flex;
+    align-items: center;
+}
+
+.history__action-created {
+    width: 180px;
+    display: flex;
+    align-items: center;
+}
+
+.history__action-name {
+    width: 200px;
+    display: flex;
+    align-items: center;
+}
+
+.history__action-photos {
+    width: 300px;
+    display: flex;
+    align-items: center;
+}
+
+.history__action-photo {
+
+}
+
+.history__action-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 170px;
+}
+
+.history__action-actions button {
+    margin: 0 0 0 10px;
+}

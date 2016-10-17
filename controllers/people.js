@@ -15,8 +15,10 @@
          * @param $scope
          * @param $rootScope
          * @param $window
+         * @param {HistoryStore} HistoryStore
+         * @param {ActionModel} ActionModel
          */
-        constructor($scope, $rootScope, $window) {
+        constructor($scope, $rootScope, $window, HistoryStore, ActionModel) {
             $scope.$watch('client', (value) => {
                 if (value !== null) {
                     $scope.refresh();
@@ -77,6 +79,15 @@
                     delete $scope.voting[person.id];
                     $scope.$apply();
                 });
+            };
+
+            $scope.history = (action, person) => {
+                let model = new ActionModel({
+                    action: action,
+                    created: new Date(),
+                    person: person
+                });
+                HistoryStore.push(model);
             };
 
             $scope.refresh = () => {

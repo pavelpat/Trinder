@@ -1,0 +1,32 @@
+<div class="layout__loader-over" ng-show="!client"></div>
+<ng-photoswipe open="gallery.shown" on-close="gallery.close()"
+    slides="gallery.slides" options="gallery.options"
+    template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
+<div class="history">
+    <div class="layout__block layout__loader" ng-show="loading"></div>
+    <div class="history__action layout__block" ng-repeat="action in actions"
+        ng-class="{'layout__loader-inner': voting[person.id]}">
+        <div class="history__action-action">
+            <span ng-if="action.action == 'like'">Liked</span>
+            <span ng-if="action.action == 'pass'">Passed</span>
+        </div>
+        <div class="history__action-created">
+            {{ action.created.toLocaleString() }}
+        </div>
+        <div class="history__action-name">
+            {{ action.person.name }}, {{ ageText(action.person.birth) }}
+        </div>
+        <div class="history__action-photos">
+            <div ng-repeat="photo in action.person.photos">
+                <img class="history__action-photo" src="{{ processed.url }}"
+                     ng-repeat="processed in photo.processed" ng-if="processed.width == 84"
+                     ng-click="gallery.open(action.person.photos, $index)">
+            </div>
+        </div>
+        <div class="history__action-actions">
+            <button class="btn btn-danger" ng-click="pass(action.person)">Pass</button>
+            <button class="btn btn-primary" ng-click="like(action.person)">Like</button>
+        </div>
+    </div>
+</div>
+<div class="match" ng-if="matched">Got new match!</div>
