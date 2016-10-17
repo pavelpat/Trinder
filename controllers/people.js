@@ -58,7 +58,6 @@
 
             $scope.react = (action, person) => {
                 $scope.voting[person.id] = true;
-                $scope.$apply();
 
                 let reactor = {
                     'like': $scope.client.like,
@@ -111,12 +110,14 @@
             $scope.onKeyDown37 = (event) => {
                 if ($scope.people.length && !$scope.voting[$scope.people[0].id]) {
                     $scope.pass($scope.people[0]);
+                    $scope.$apply();
                 }
             };
 
             $scope.onKeyDown39 = (event) => {
                 if ($scope.people.length && !$scope.voting[$scope.people[0].id]) {
                     $scope.like($scope.people[0]);
+                    $scope.$apply();
                 }
             };
         }

@@ -78,7 +78,6 @@
 
             $scope.react = (action, person) => {
                 $scope.voting[person.id] = true;
-                $scope.$apply();
 
                 let reactor = {
                     'like': $scope.client.like,
