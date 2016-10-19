@@ -271,8 +271,7 @@ body {
 }
 
 .matches__list-item-photo-small {
-    margin: 2px;
-    width: 42px;
+    margin: 4px 2px 0;
     height: 42px;
 }
 
@@ -285,6 +284,7 @@ body {
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
+    margin-left: 350px;
 }
 
 .matches__chat-person { }
@@ -393,6 +393,19 @@ body {
     align-items: center;
 }
 
+.history__action-like {
+}
+
+.history__action-pass {
+    background: rgba(80, 114, 153, 0.07);
+}
+
+.history__action-index {
+    width: 30px;
+    display: flex;
+    align-items: center;
+}
+
 .history__action-created {
     width: 180px;
     display: flex;
@@ -412,14 +425,16 @@ body {
 }
 
 .history__action-photo {
-
+    width: 42px;
+    height: 42px;
+    margin: -10px 2px;
 }
 
 .history__action-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 170px;
+    width: 140px;
 }
 
 .history__action-actions button {

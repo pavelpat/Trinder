@@ -176,6 +176,7 @@
             }
 
             $scope.ageText = (birth) => {
+                if (!birth) return null;
                 return (new Date()).getYear() - birth.getYear();
             }
         }

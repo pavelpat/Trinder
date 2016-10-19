@@ -5,7 +5,14 @@
 <div class="history">
     <div class="layout__block layout__loader" ng-show="loading"></div>
     <div class="history__action layout__block" ng-repeat="action in actions"
-        ng-class="{'layout__loader-inner': voting[person.id]}">
+        ng-class="{
+            'layout__loader-inner': voting[person.id],
+            'history__action-like': action.action == 'like',
+            'history__action-pass': action.action == 'pass'
+        }">
+        <div class="history__action-index">
+            {{ $index + 1 }}
+        </div>
         <div class="history__action-action">
             <span ng-if="action.action == 'like'">Liked</span>
             <span ng-if="action.action == 'pass'">Passed</span>
@@ -24,8 +31,8 @@
             </div>
         </div>
         <div class="history__action-actions">
-            <button class="btn btn-danger" ng-click="pass(action.person)">Pass</button>
-            <button class="btn btn-primary" ng-click="like(action.person)">Like</button>
+            <button class="btn btn-danger" ng-click="pass(action.person)" ng-disabled="!action.person.id">Repass</button>
+            <button class="btn btn-primary" ng-click="like(action.person)" ng-disabled="!action.person.id">Relike</button>
         </div>
     </div>
 </div>

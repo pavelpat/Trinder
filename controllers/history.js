@@ -51,8 +51,9 @@
         /**
          * @param $scope
          * @param {HistoryStore} HistoryStore
+         * @param {ActionModel} ActionModel
          */
-        constructor($scope, HistoryStore) {
+        constructor($scope, HistoryStore, ActionModel) {
             $scope.actions = [];
             $scope.loading = false;
             $scope.voting = {};
@@ -62,7 +63,7 @@
                 let action = 'like';
                 $scope.react(action, person).then(() => {
                     $scope.history(action, person).then(() => {
-                        $scope.reload();
+                        $scope.refresh();
                     });
                 });
             };
@@ -71,7 +72,7 @@
                 let action = 'pass';
                 $scope.react(action, person).then(() => {
                     $scope.history(action, person).then(() => {
-                        $scope.reload();
+                        $scope.refresh();
                     });
                 });
             };
@@ -84,23 +85,23 @@
                     'pass': $scope.client.pass
                 }[action].bind($scope.client);
 
-                return reactor(person.id).then(() => {
-                    let index = $scope.people.indexOf(person);
-                    if (index > -1) {
-                        $scope.people.splice(index, 1);
-                        if (!$scope.people.length) {
-                            $scope.refresh();
-                        }
-                    }
+                let endVoting = () => {
                     delete $scope.voting[person.id];
                     $scope.$apply();
-                }, () => {
-                    delete $scope.voting[person.id];
-                    $scope.$apply();
-                });
+                };
+
+                return reactor(person.id).then(endVoting, endVoting);
             };
 
-            $scope.reload = () => {
+            $scope.history = (action, person) => {
+                let model = new ActionModel({});
+                model.created = new Date();
+                model.action = action;
+                model.person = person;
+                return HistoryStore.push(model);
+            };
+
+            $scope.refresh = () => {
                 $scope.loading = true;
 
                 return HistoryStore.actions.then((actions) => {
@@ -111,10 +112,11 @@
             };
 
             $scope.ageText = (birth) => {
+                if (!birth) return null;
                 return (new Date()).getYear() - birth.getYear();
             };
 
-            $scope.reload();
+            $scope.refresh();
         }
     });
 })(angular, App);

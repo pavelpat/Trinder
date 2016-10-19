@@ -81,11 +81,10 @@
             };
 
             $scope.history = (action, person) => {
-                let model = new ActionModel({
-                    action: action,
-                    created: new Date(),
-                    person: person
-                });
+                let model = new ActionModel({});
+                model.created = new Date();
+                model.action = action;
+                model.person = person;
                 HistoryStore.push(model);
             };
 
@@ -103,6 +102,7 @@
             };
 
             $scope.ageText = (birth) => {
+                if (!birth) return null;
                 let age = (new Date()).getYear() - birth.getYear();
                 return age + ' years';
             };
