@@ -46,12 +46,6 @@ body {
     width: 1010px;
 }
 
-.layout__flex {
-    display: flex;
-    align-items: stretch;
-    align-content: stretch;
-}
-
 .layout__block {
     background: #ffffff;
     box-shadow: 0 0 5px 0 #CCC;
