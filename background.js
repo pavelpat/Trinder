@@ -29,19 +29,25 @@ function injectInterceptor(info) {
     // Create interceptor.
     let code = (
         '\\\'use strict\\\';' +
-        'AsyncRequest.prototype._handleJSResponseOrig = AsyncRequest.prototype._handleJSResponse;' +
-        'AsyncRequest.prototype._handleJSResponse = function(value) {' +
-        '    if (value.jsmods && value.jsmods.require && value.jsmods.require.length) {' +
-        '        let event = value.jsmods.require[0];' +
-        '        if (event[0] == \\\'ServerRedirect\\\' && event[1] == \\\'redirectPageTo\\\') {' +
-        '            chrome.runtime.sendMessage(\\\'' + chrome.runtime.id + '\\\', {' +
-        '                type: \\\'token\\\',' +
-        '                url: event[3][0]' +
-        '            });' +
+        // Wait for async load framework ready.
+        // After this event it is possible to access services via require(...) call.
+        'wait_for_load(\\\'Run\\\', null, () => {' +
+        '    \\\'use strict\\\';' +
+        '    let AsyncRequest = require(\\\'AsyncRequest\\\');' +
+        '    AsyncRequest.prototype._handleJSResponseOrig = AsyncRequest.prototype._handleJSResponse;' +
+        '    AsyncRequest.prototype._handleJSResponse = function(value) {' +
+        '        if (value.jsmods && value.jsmods.require && value.jsmods.require.length) {' +
+        '            let event = value.jsmods.require[0];' +
+        '            if (event[0] == \\\'ServerRedirect\\\' && event[1] == \\\'redirectPageTo\\\') {' +
+        '                chrome.runtime.sendMessage(\\\'' + chrome.runtime.id + '\\\', {' +
+        '                    type: \\\'token\\\',' +
+        '                    url: event[3][0]' +
+        '                });' +
+        '            }' +
         '        }' +
-        '    }' +
-        '    return AsyncRequest.prototype._handleJSResponseOrig.call(this, value);' +
-        '};'
+        '        return AsyncRequest.prototype._handleJSResponseOrig.call(this, value);' +
+        '    };' +
+        '});'
     );
 
     // Inject interceptor.
