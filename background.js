@@ -1,9 +1,9 @@
 'use strict';
 
-var redirectUri = 'fbconnect://success',
-    oauthUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&redirect_uri=' + redirectUri + '&scope=basic_info,email,public_profile,user_about_me,user_activities,user_birthday,user_education_history,user_friends,user_interests,user_likes,user_location,user_photos,user_relationship_details&response_type=token',
-    oauthWildcard = 'https://www.facebook.com/dialog/oauth*',
-    submitWildcard = 'https://www.facebook.com/v2.1/dialog/oauth/confirm*';
+let redirectUri = 'fbconnect://success',
+    scopes = ['basic_info', 'email', 'public_profile', 'user_about_me', 'user_activities', 'user_birthday', 'user_education_history', 'user_friends', 'user_interests', 'user_likes', 'user_location', 'user_photos', 'user_relationship_details'],
+    oauthUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&redirect_uri=' + redirectUri + '&scope=' + scopes.join(',') + '&response_type=token',
+    oauthWildcard = 'https://www.facebook.com/dialog/oauth*';
 
 chrome.runtime.onMessage.addListener(acceptRequest);
 chrome.runtime.onMessageExternal.addListener(acceptToken);
@@ -15,7 +15,7 @@ function acceptRequest(message) {
 
     // Listen for oauth urls.
     chrome.webRequest.onBeforeRequest.addListener(injectInterceptor, {
-        urls: [submitWildcard]
+        urls: [oauthWildcard]
     }, ['blocking']);
 
     // Begin oauth process.
@@ -49,6 +49,7 @@ function injectInterceptor(info) {
         code: (
             '\'use strict\';' +
             'let element = window.document.createElement(\'script\');' +
+            'element.async = true;' +
             'element.innerHTML = \'' + code + '\';' +
             'window.document.head.appendChild(element);'
         )
@@ -71,7 +72,7 @@ function acceptToken(data) {
 }
 
 function extractToken(url) {
-    var regexp = new RegExp('access_token=(.*)&expires_in=(.*)'),
+    let regexp = new RegExp('access_token=(.*)&expires_in=(.*)'),
         matches = url.match(regexp);
     return {
         token: matches[1],
