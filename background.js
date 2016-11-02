@@ -29,11 +29,8 @@ function injectInterceptor(info) {
     // Create interceptor.
     let code = (
         '\\\'use strict\\\';' +
-        // Wait for async load framework ready.
-        // After this event it is possible to access services via require(...) call.
-        'wait_for_load(\\\'Run\\\', null, () => {' +
+        'requireLazy([\\\'AsyncRequest\\\'], (AsyncRequest) => {' +
         '    \\\'use strict\\\';' +
-        '    let AsyncRequest = require(\\\'AsyncRequest\\\');' +
         '    AsyncRequest.prototype._handleJSResponseOrig = AsyncRequest.prototype._handleJSResponse;' +
         '    AsyncRequest.prototype._handleJSResponse = function(value) {' +
         '        if (value.jsmods && value.jsmods.require && value.jsmods.require.length) {' +
