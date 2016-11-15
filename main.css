@@ -304,11 +304,12 @@ body {
 }
 
 .matches__chat-person-bio {
-    color: #889cb2;
-    font-size: 120%;
+    color: #305279;
+    font-size: 100%;
     font-weight: normal;
     margin: 10px 0 10px;
     padding: 0 10px;
+    line-height: 140%;
 }
 
 .matches__messages {
