@@ -69,7 +69,7 @@
             }
 
             _get(path) {
-                var headers = {
+                let headers = {
                     'Content-Type': 'application/json'
                 };
                 if (this.authToken) {
@@ -87,13 +87,18 @@
                     }).success((r) => {
                         resolve(r);
                     }).error((e) => {
-                        reject('Bad response: ' + e);
+                        reject(this._error('Client error', [
+                            ['method', 'GET'],
+                            ['path', path],
+                            ['status', e.status],
+                            ['response', e.responseText]
+                        ]));
                     });
                 });
             }
 
             _post(path, data) {
-                var headers = {
+                let headers = {
                     'Content-Type': 'application/json'
                 };
                 if (this.authToken) {
@@ -109,9 +114,20 @@
                     }).success((s) => {
                         resolve(s);
                     }).error((e) => {
-                        reject('Bad response: ' + e);
+                        reject(this._error('Client error', [
+                            ['method', 'POST'],
+                            ['path', path],
+                            ['status', e.status],
+                            ['reqbody', data],
+                            ['response', e.responseText]
+                        ]));
                     });
                 });
+            }
+
+            _error(message, details) {
+                let detail = (d) => d[0] + '=' + d[1];
+                return message + ': ' + details.map(detail).join(', ');
             }
         }
     });
