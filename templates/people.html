@@ -4,8 +4,7 @@
     template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
 <div class="people">
     <div class="layout__block layout__loader" ng-show="loading"></div>
-    <div class="people__person layout__block"
-        ng-repeat="person in people" ng-class="{'layout__loader-inner': voting[person.id]}">
+    <div class="people__person layout__block" ng-repeat="person in people" ng-class="{'layout__loader-inner': voting[person.id]}" ng-init="person.instagramPhotoLimit=6;" ng-class-odd="'layout__block-odd'" ng-class-even="'layout__block-even'">
         <div ng-if="$first" class="people__person-buttons">
             <div class="people__person-buttons-pass">
                 <span class="people__person-buttons-arrow">&#10229;</span>
@@ -16,18 +15,37 @@
                 <span class="people__person-buttons-text">Like</span>
             </div>
         </div>
-        <div class="people__person-name">{{ person.name }}<span ng-if="person.birth">, {{ ageText(person.birth) }}</span></div>
+        <div class="people__person-name">{{ person.name }}<span ng-if="person.birth">, {{ageText(person.birth)}} ({{person.birth | date:'dd MMM yyyy'}})</span><span ng-if="person.connections">, {{person.connections}} friends</span></div>
         <div class="people__person-bio">{{ person.bio }}</div>
         <div class="people__person-photo-wrap">
-            <div ng-repeat="photo in person.photos | limitTo : 5" ng-init="index = $index">
+            <div ng-repeat="photo in person.photos | limitTo : 16" ng-init="index = $index">
                 <img class="people__person-photo" src="{{ processed.url }}"
                      ng-repeat="processed in photo.processed"
                      ng-click="gallery.open(person.photos, index)"
                      ng-if="processed.width == 172">
             </div>
         </div>
-        <button class="btn btn-danger" ng-click="pass(person)">Pass</button>
-        <button class="btn btn-primary" ng-click="like(person)">Like</button>
+		<div class="btn-group people__person-bottom-buttons">			
+			<button type="button" class="btn btn-danger" ng-click="pass(person)">Pass</button>
+			<button type="button" class="btn btn-success" ng-click="like(person)">Like</button>
+		</div>
+        <div ng-if="person.instagram">
+			<hr>
+			<span class="people__instagram-name">
+				Instagram Profile, 
+				<a href="http://instagram.com/{{ person.instagram.username }}/" target="_blank">{{ person.instagram.username }}</a>
+				, Photos:{{person.instagram.mediaCount}}
+				, Last fetch: {{ person.instagram.lastFetchTime | date: 'dd MMM yyyy' }}
+			</span>
+			<br>
+			<div class="people__instagram-photo-wrap">
+				<div ng-repeat="photo in person.instagram.photos | limitTo : person.instagramPhotoLimit" ng-init="index = $index;">
+					<img class="people__instagram-photo" src="{{ photo.thumbnail }}" ng-click="gallery.open(person.instagram.photos, index)">
+				</div>
+			</div>
+			<button ng-if="person.instagramPhotoLimit == 6" ng-click="person.instagramPhotoLimit=32" type="button" class="btn btn-primary">Load more...</button>
+        </div>
+		
     </div>
 </div>
 <div class="match" ng-if="matched">Got new match!</div>
