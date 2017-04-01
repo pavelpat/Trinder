@@ -2,7 +2,7 @@
     'use strict';
 
     App.factory('PersonModel', function (
-        BaseModel, PhotoModel, JobModel, SchoolModel,
+        BaseModel, PhotoModel, JobModel, SchoolModel, InstagramModel,
         ModelField, ArrayField, NumberField, StringField, DateField
     ) {
         class PersonModel extends BaseModel {}
@@ -19,9 +19,11 @@
             'commonInterests': new ArrayField('common_interests', new StringField(null)),
             'photos': new ArrayField('photos', new ModelField(null, PhotoModel)),
             'jobs': new ArrayField('jobs', new ModelField(null, JobModel)),
-            'schools': new ArrayField('schools', new ModelField(null, SchoolModel))
-        };
-
+            'schools': new ArrayField('schools', new ModelField(null, SchoolModel)),
+			'connections': new NumberField('connection_count'),
+			'sNumber': new NumberField('s_number'),
+			'instagram': new ModelField(null, InstagramModel)
+        };			
         return PersonModel;
     });
 })(App);

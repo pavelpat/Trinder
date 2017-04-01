@@ -163,9 +163,36 @@ body {
 }
 
 .people__person-photo {
-    margin: 10px;
-    width: 172px;
-    height: 172px;
+    margin: 5px;
+    width: 150px;
+    height: 150px;
+}
+
+.people__instagram-name {
+    font-size: 140%;
+}
+
+.people__instagram-photo-wrap {
+    margin: 0 -10px;
+}
+
+.people__instagram-photo-wrap div {
+    display: inline-block;
+}
+
+.people__instagram-photo {
+    margin: 5px;
+    width: 150px;
+    height: 150px;
+}
+
+.people__person-bottom-buttons {
+	margin: 0 -10px;
+	width: 320px;
+}
+
+.people__person-bottom-buttons > .btn {
+	width: 50%;
 }
 
 .match {
