@@ -28,9 +28,10 @@
     </ul>
     <div class="layout__block matches__chat" ng-if="active">
         <div class="matches__chat-person">
-            <a class="btn btn-default btn-xs matches__chat-person-detect" href="#" ui-sref="locator({personId: active.person.id})">
-                Detect location
-            </a>
+            <a class="btn btn-default btn-xs matches__chat-person-details" href="#{{active.person.id}}"
+               ui-sref="person({personId: active.person.id})">Profile details</a>
+            <a class="btn btn-default btn-xs matches__chat-person-detect" href="#{{active.person.id}}"
+               ui-sref="locator({personId: active.person.id})">Detect location</a>
             <h1 class="matches__chat-person-name">
                 {{ active.person.name }}, {{ ageText(active.person.birth) }}
             </h1>

@@ -1,0 +1,37 @@
+<div class="layout__loader-over" ng-show="!client || loading"></div>
+<ng-photoswipe open="gallery.shown" on-close="gallery.close()"
+               slides="gallery.slides" options="gallery.options"
+               template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
+<div class="person layout__block" ng-if="person.id">
+    <div class="person__side">
+        <h2>Name</h2>
+        {{person.name}}, {{ ageText(person.birth) }}
+
+        <h2>Gender</h2>
+        <span ng-if="person.gender == 0">Male</span>
+        <span ng-if="person.gender == 1">Female</span>
+
+        <h2>Description</h2>
+        {{person.bio}}
+        <span ng-if="!person.bio.length">-</span>
+
+        <h2>Distance</h2>
+        {{distanceText(person.distance)}}
+    </div>
+    <div class="person__side">
+        <h2>Photos</h2>
+        <div class="person__photos">
+        <img class="person__photo" ng-repeat="photo in person.photos"
+             src="{{photo.url}}" ng-click="gallery.open(person.photos, $index)">
+        </div>
+
+        <h2>Jobs</h2>
+        <p ng-repeat="job in person.jobs">{{job.title.name}}</p>
+        <span ng-if="!person.jobs.length">-</span>
+
+        <h2>Schools</h2>
+        <p ng-repeat="school in person.schools">{{school.name}}</p>
+        <span ng-if="!person.schools.length">-</span>
+    </div>
+    <br clear="all">
+</div>

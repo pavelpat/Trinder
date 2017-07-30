@@ -308,7 +308,13 @@ body {
 .matches__chat-person-detect {
     color: #305279;
     float: right;
-    margin: 20px 0 0;
+    margin: 20px 2px 0;
+}
+
+.matches__chat-person-details {
+    color: #305279;
+    float: right;
+    margin: 20px 2px 0;
 }
 
 .matches__chat-person-name {
@@ -391,6 +397,24 @@ body {
     margin: 0;
 }
 
+.person__side {
+    float: left;
+    width: 50%;
+}
+
+.person__photos:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.person__photo {
+    float: left;
+    width: 64px;
+    height: 64px;
+    margin: 2px;
+}
+
 .history {}
 
 .history__action {
@@ -466,6 +490,11 @@ body {
 
 .history__action-btn-superlike {
     background: red;
+}
+
+.settings__setting-side {
+    float: left;
+    width: 50%;
 }
 
 .settings__setting-bio {

@@ -26,9 +26,9 @@
                      ng-if="processed.width == 172">
             </div>
         </div>
-        <button class="btn people__person-btn people__person-pass" ng-click="pass(person)">&#x1F44E Pass &#x1F44E</button>
-        <button class="btn people__person-btn people__person-like" ng-click="like(person)">&#x1F44D Like &#x1F44D</button>
-        <button class="btn people__person-btn people__person-superlike" ng-click="superlike(person)">&#x1F31F Super &#x1F31F</button>
+        <a class="btn people__person-btn people__person-pass" href="#{{person.id}}" ng-click="pass(person)">&#x1F44E Pass &#x1F44E</a>
+        <a class="btn people__person-btn people__person-like" href="#{{person.id}}" ng-click="like(person)">&#x1F44D Like &#x1F44D</a>
+        <a class="btn people__person-btn people__person-superlike" href="#{{person.id}}" ng-click="superlike(person)">&#x1F31F Super &#x1F31F</a>
     </div>
 </div>
 <div class="notification" ng-if="notification">{{notification}}</div>

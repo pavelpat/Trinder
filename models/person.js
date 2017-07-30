@@ -3,14 +3,14 @@
 
     App.factory('PersonModel', function (
         BaseModel, PhotoModel, JobModel, SchoolModel,
-        ModelField, ArrayField, NumberField, StringField, DateField
+        ModelField, ArrayField, NumberField, DistanceField, StringField, DateField
     ) {
         class PersonModel extends BaseModel {}
         PersonModel.prototype.fields = {
             'id': new StringField('_id'),
             'ping': new DateField('ping_time'),
             'birth': new DateField('birth_date'),
-            'distance': new NumberField('distance_mi'),
+            'distance': new DistanceField('distance_mi'),
             'bio': new StringField('bio'),
             'name': new StringField('name'),
             'gender': new NumberField('gender'),

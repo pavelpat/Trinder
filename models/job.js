@@ -7,8 +7,14 @@
             'name': new StringField('name')
         };
 
+        class TitleModel extends BaseModel {}
+        TitleModel.prototype.fields = {
+            'name': new StringField('name')
+        };
+
         class JobModel extends BaseModel {}
         JobModel.prototype.fields = {
+            'title': new ModelField('title', TitleModel),
             'company': new ModelField('company', CompanyModel)
         };
 

@@ -1,8 +1,11 @@
 <div class="layout__loader-over" ng-show="!client || loading"></div>
+<ng-photoswipe open="gallery.shown" on-close="gallery.close()"
+               slides="gallery.slides" options="gallery.options"
+               template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>
 <div class="settings layout__block">
     <div class="settings__setting">
         <form>
-            <div style="float: left; width: 50%;">
+            <div class="settings__setting-side">
                 <h2>Name</h2>
                 {{user.name}}
 
@@ -26,28 +29,24 @@
                 <label><input type="radio" ng-model="user.genderFilter" ng-value="0"> Male</label><br>
                 <label><input type="radio" ng-model="user.genderFilter" ng-value="1"> Female</label>
             </div>
-            <div style="float: left; width: 50%;">
+            <div class="settings__setting-side">
                 <h2>Photos</h2>
                 <div class="settings__setting-photos">
-                    <a href="{{photo.url}}" ng-repeat="photo in user.photos">
-                        <img class="settings__setting-photo" src="{{photo.url}}">
-                    </a>
+                    <img class="settings__setting-photo" ng-repeat="photo in user.photos"
+                         src="{{photo.url}}" ng-click="gallery.open(user.photos, $index)">
                 </div>
 
                 <h2>Interests</h2>
-                <p ng-repeat="interest in user.interests">
-                    {{interest.name}}
-                </p>
+                <p ng-repeat="interest in user.interests">{{interest.name}}</p>
+                <span ng-if="!user.interests.length">-</span>
 
                 <h2>Jobs</h2>
-                <p ng-repeat="job in user.jobs">
-                    {{job.company.name}}
-                </p>
+                <p ng-repeat="job in user.jobs">{{job.company.name}}</p>
+                <span ng-if="!user.jobs.length">-</span>
 
                 <h2>Schools</h2>
-                <p ng-repeat="school in user.schools">
-                    {{school.name}}
-                </p>
+                <p ng-repeat="school in user.schools">{{school.name}}</p>
+                <span ng-if="!user.schools.length">-</span>
             </div>
             <br clear="all">
 
