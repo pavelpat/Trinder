@@ -44,11 +44,12 @@
         /**
          * @param $scope
          * @param $window
+         * @param $timeout
          * @param Geo
          * @param SettingsStore
          * @param Store
          */
-        constructor($scope, $window, Geo, SettingsStore, Store) {
+        constructor($scope, $window, $timeout, Geo, SettingsStore, Store) {
             $scope.settings = null;
             SettingsStore.settings.then((settings) => {
                 $scope.settings = settings;
@@ -59,7 +60,14 @@
                 if (user !== null) {
                     let distance = user.distance * 1000 * 1.60934;
                     $scope.location.paths.radius.radius = distance;
-                    $scope.location.slider.value = translateFrom(distance);
+
+                    // Fixes bug with incorrect position of slider on page load.
+                    // When page loads first time slider stay in incorrect position
+                    // while model value is set properly. Set new (different) value
+                    // in current session and set correct value in timeout session.
+                    let translated = translateFrom(distance);
+                    $scope.location.slider.value = translated - 1;
+                    $timeout(() => {$scope.location.slider.value = translated;}, 0);
                 }
             });
 
@@ -125,7 +133,7 @@
 
             // Drag circle to marker.
             $scope.$on('leafletDirectiveMarker.move', (event, args) => {
-                var geo = args.leafletEvent.latlng;
+                let geo = args.leafletEvent.latlng;
                 $scope.location.paths.radius.latlngs = {
                     lat: geo.lat,
                     lng: geo.lng
@@ -178,7 +186,7 @@
                 Store.clear().then(() => {
                     $window.location.reload();
                 });
-            }
+            };
         }
     });
 })(App);
