@@ -25,6 +25,14 @@
              src="{{photo.url}}" ng-click="gallery.open(person.photos, $index)">
         </div>
 
+        <h2 ng-if="person.instagram">Instagram:
+        <a target="_blank" href="https://instagr.am/{{person.instagram.username}}/">
+            {{person.instagram.username}}</a></h2>
+        <div class="person__photos" ng-if="person.instagram">
+            <img class="person__photo" ng-repeat="photo in person.instagram.photos"
+                 src="{{photo.processed}}" ng-click="gallery.open(person.instagram.photos, $index)">
+        </div>
+
         <h2>Jobs</h2>
         <p ng-repeat="job in person.jobs">{{job.title.name}}</p>
         <span ng-if="!person.jobs.length">-</span>
