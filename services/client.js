@@ -20,13 +20,32 @@
                 });
             }
 
-            profile(distance) {
-                let distanceMi = Math.round(distance / 1.60934 / 1000);
+            profile(user) {
+                let data = user.toObject();
+
+                let distanceMi = data['distance_filter'];
                 distanceMi = distanceMi < 1 ? 1 : distanceMi;
                 distanceMi = distanceMi > 150 ? 150 : distanceMi;
-                return this._post('profile', {
-                    'distance_filter': distanceMi
-                });
+                data['distance_filter'] = distanceMi;
+
+                let updateFields = [
+                    'age_filter_min',
+                    'age_filter_max',
+                    'bio',
+                    'gender',
+                    'gender_filter',
+                    'discoverable',
+                    'distance_filter'
+                ];
+                for (let field in data){
+                    if (data.hasOwnProperty(field)) {
+                        if (updateFields.indexOf(field) == -1) {
+                            delete data[field];
+                        }
+                    }
+                }
+
+                return this._post('profile', data);
             }
 
             ping(lat, lon) {

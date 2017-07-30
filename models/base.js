@@ -62,6 +62,26 @@
         }
     }
 
+    class DistanceField extends NumberField {
+        /**
+         * @param {*} value
+         * @returns {number|null}
+         */
+        toModel(value) {
+            value = super.toModel(value);
+            return 1.60934 * 1000 * value;
+        }
+
+        /**
+         * @param {*} value
+         * @returns {number|null}
+         */
+        toObject(value) {
+            value = super.toObject(value);
+            return value / 1000 / 1.60934;
+        }
+    }
+
     class StringField extends BaseField {
         /**
          * @param {*} value
@@ -193,6 +213,7 @@
 
     App.value('BoolField', BoolField);
     App.value('NumberField', NumberField);
+    App.value('DistanceField', DistanceField);
     App.value('StringField', StringField);
     App.value('DateField', DateField);
     App.value('ArrayField', ArrayField);

@@ -428,3 +428,21 @@ body {
 .history__action-actions button {
     margin: 0 0 0 10px;
 }
+
+.settings__setting-bio {
+    width: 90%;
+    height: 100px;
+}
+
+.settings__setting-photos:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.settings__setting-photo {
+    float: left;
+    width: 64px;
+    height: 64px;
+    margin: 2px;
+}

@@ -58,16 +58,14 @@
 
             $scope.$watch('user', (user) => {
                 if (user !== null) {
-                    let distance = user.distance * 1000 * 1.60934;
-                    $scope.location.paths.radius.radius = distance;
+                    $scope.location.paths.radius.radius = user.distance;
 
                     // Fixes bug with incorrect position of slider on page load.
                     // When page loads first time slider stay in incorrect position
                     // while model value is set properly. Set new (different) value
                     // in current session and set correct value in timeout session.
-                    let translated = translateFrom(distance);
-                    $scope.location.slider.value = translated - 1;
-                    $timeout(() => {$scope.location.slider.value = translated;}, 0);
+                    $scope.location.slider.value = user.distance - 1;
+                    $timeout(() => {$scope.location.slider.value = user.distance;}, 0);
                 }
             });
 
@@ -108,11 +106,10 @@
                     }
                 },
                 slider: {
-                    floor: 10,
-                    ceil: 100,
-                    value: 45,
+                    floor: 1000,
+                    ceil: 150000,
+                    value: 10,
                     translate: (value) => {
-                        value = translateTo(value);
                         return Math.floor(value / 1000) + ',' +
                             Math.floor(value / 100) % 10 + ' km';
                     }
@@ -120,16 +117,11 @@
             };
 
             $scope.$watch('location.slider.value', (value) => {
-                $scope.location.paths.radius.radius = translateTo(value);
+                $scope.location.paths.radius.radius = value;
+                if ($scope.user !== null) {
+                    $scope.user.distance = value;
+                }
             });
-
-            function translateTo(value) {
-                return Math.round(15 * value * value / 50) * 50;
-            }
-
-            function translateFrom(value) {
-                return Math.round(Math.sqrt(value / 15));
-            }
 
             // Drag circle to marker.
             $scope.$on('leafletDirectiveMarker.move', (event, args) => {
@@ -173,7 +165,7 @@
                 SettingsStore.settings = $scope.settings;
                 Promise.all([
                     $scope.client.ping($scope.settings.geolat, $scope.settings.geolon),
-                    $scope.client.profile(translateTo($scope.location.slider.value))
+                    $scope.client.profile($scope.user)
                 ]).then(() => {
                     $scope.loading = false;
                     $scope.saved = true;

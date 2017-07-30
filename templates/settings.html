@@ -1,8 +1,57 @@
 <div class="layout__loader-over" ng-show="!client || loading"></div>
 <div class="settings layout__block">
-    <h2>Positioning</h2>
     <div class="settings__setting">
         <form>
+            <div style="float: left; width: 50%;">
+                <h2>Name</h2>
+                {{user.name}}
+
+                <h2>Description</h2>
+                <textarea class="settings__setting-bio" ng-model="user.bio" />
+
+                <h2>Discoverable</h2>
+                <label><input type="radio" ng-model="user.discoverable" ng-value="true"> Yes</label><br>
+                <label><input type="radio" ng-model="user.discoverable" ng-value="false"> No</label>
+
+                <h2>Gender</h2>
+                <label><input type="radio" ng-model="user.gender" ng-value="0"> Male</label><br>
+                <label><input type="radio" ng-model="user.gender" ng-value="1"> Female</label>
+
+                <h2>Search for ages</h2>
+                <input type="number" ng-model="user.ageMin" style="width: 90px;">
+                -
+                <input type="number" ng-model="user.ageMax" style="width: 90px;">
+
+                <h2>Search for genders</h2>
+                <label><input type="radio" ng-model="user.genderFilter" ng-value="0"> Male</label><br>
+                <label><input type="radio" ng-model="user.genderFilter" ng-value="1"> Female</label>
+            </div>
+            <div style="float: left; width: 50%;">
+                <h2>Photos</h2>
+                <div class="settings__setting-photos">
+                    <a href="{{photo.url}}" ng-repeat="photo in user.photos">
+                        <img class="settings__setting-photo" src="{{photo.url}}">
+                    </a>
+                </div>
+
+                <h2>Interests</h2>
+                <p ng-repeat="interest in user.interests">
+                    {{interest.name}}
+                </p>
+
+                <h2>Jobs</h2>
+                <p ng-repeat="job in user.jobs">
+                    {{job.company.name}}
+                </p>
+
+                <h2>Schools</h2>
+                <p ng-repeat="school in user.schools">
+                    {{school.name}}
+                </p>
+            </div>
+            <br clear="all">
+
+            <h2>Positioning</h2>
             <div class="form-group checkbox">
                 <label>
                     <input type="checkbox" ng-model="settings.geolocation">

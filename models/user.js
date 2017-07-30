@@ -2,8 +2,8 @@
     'use strict';
 
     App.factory('UserModel', function (
-        BaseModel, PhotoModel, JobModel, SchoolModel,
-        ModelField, ArrayField, BoolField, NumberField, StringField, DateField
+        BaseModel, PhotoModel, JobModel, SchoolModel, InterestModel,
+        ModelField, ArrayField, BoolField, NumberField, DistanceField, StringField, DateField
     ) {
         class UserModel extends BaseModel {}
         UserModel.prototype.fields = {
@@ -18,10 +18,10 @@
             'name': new StringField('name'),
             'fullName': new StringField('full_name'),
             'connections': new NumberField('connection_count'),
-            'distance': new NumberField('distance_filter'),
+            'distance': new DistanceField('distance_filter'),
             'gender': new NumberField('gender'),
             'genderFilter': new NumberField('gender_filter'),
-            'interests': new StringField('interests'),
+            'interests': new ArrayField('interests', new ModelField(null, InterestModel)),
             'discoverable': new BoolField('discoverable'),
             'photos': new ArrayField('photos', new ModelField(null, PhotoModel)),
             'jobs': new ArrayField('jobs', new ModelField(null, JobModel)),
