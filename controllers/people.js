@@ -58,6 +58,7 @@
                 $scope.react(action, person).then((matched) => {
                     if (matched) {
                         $scope.notify('Got new match!');
+                        $scope.$apply();
                     }
                     $scope.history(action, person);
                 });
@@ -68,6 +69,7 @@
                 $scope.react(action, person).then((result) => {
                     if (result) {
                         $scope.notify('Got new match!');
+                        $scope.$apply();
                     }
                     $scope.history(action, person);
                 });

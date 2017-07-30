@@ -67,7 +67,7 @@
 
             like(id) {
                 return this._get('like/' + id).then((response) => {
-                    return !!response['match'];
+                    return response['match'] === true;
                 });
             }
 
@@ -76,7 +76,7 @@
                     if (response['limit_exceeded']){
                         throw Error('Superlikes limit exceeded');
                     }
-                    return !!response['match'];
+                    return response['match'] === true;
                 });
             }
 
