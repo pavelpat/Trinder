@@ -8,14 +8,13 @@
         ng-class="{
             'layout__loader-inner': voting[person.id],
             'history__action-like': action.action == 'like',
-            'history__action-pass': action.action == 'pass'
+            'history__action-pass': action.action == 'pass',
+            'history__action-superlike': action.action == 'superlike'
         }">
-        <div class="history__action-index">
-            {{ $index + 1 }}
-        </div>
         <div class="history__action-action">
-            <span ng-if="action.action == 'like'">Liked</span>
-            <span ng-if="action.action == 'pass'">Passed</span>
+            <span ng-if="action.action == 'like'">&#x1F44D Like</span>
+            <span ng-if="action.action == 'pass'">&#x1F44E Pass</span>
+            <span ng-if="action.action == 'superlike'">&#x1F31F Super</span>
         </div>
         <div class="history__action-created">
             {{ action.created.toLocaleString() }}
@@ -31,8 +30,12 @@
             </div>
         </div>
         <div class="history__action-actions">
-            <button class="btn btn-danger" ng-click="pass(action.person)" ng-disabled="!action.person.id">Repass</button>
-            <button class="btn btn-primary" ng-click="like(action.person)" ng-disabled="!action.person.id">Relike</button>
+            <button class="btn history__action-btn history__action-btn-pass"
+                    ng-click="like(action.person)" ng-disabled="!action.person.id">&#x1F44E Pass</button>
+            <button class="btn history__action-btn history__action-btn-like"
+                    ng-click="pass(action.person)" ng-disabled="!action.person.id">&#x1F44D Like</button>
+            <button class="btn history__action-btn history__action-btn-superlike"
+                    ng-click="like(action.person)" ng-disabled="!action.person.id">&#x1F31F Super</button>
         </div>
     </div>
 </div>

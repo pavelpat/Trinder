@@ -168,41 +168,63 @@ body {
     height: 172px;
 }
 
-.match {
+.people__person-btn {
+    color: white;
+    margin-right: 4px;
+}
+
+.people__person-btn:hover,
+.people__person-btn:active,
+.people__person-btn:focus {
+    color: white;
+}
+
+.people__person-pass {
+    background: #AAAAFF;
+}
+
+.people__person-like {
+    background: orange;
+}
+
+.people__person-superlike {
+    background: red;
+}
+
+.notification {
     position: fixed;
     background: #507299;
-    right: 100px;
     color: white;
     padding: 10px 20px;
-    font-size: 140%;
     box-shadow: 3px 3px 7px 0 #92b6d4;
-
-    bottom: 20px;
+    top: 70px;
+    right: 20px;
     opacity: 1;
-
+    z-index: 10000;
     transition: all .1s linear;
 }
 
-.match.ng-animate {
+.notification.ng-animate {
     transition: all .1s linear;
 }
 
-.match.ng-enter {
-    bottom: -50px;
+.notification.ng-enter {
+    top: 70px;
+    right: -50px;
     opacity: 0;
 }
 
-.match.ng-enter.ng-enter-active {
-    bottom: 20px;
+.notification.ng-enter.ng-enter-active {
+    top: 70px;
+    right: 20px;
     opacity: 1;
 }
 
-.match.ng-leave {
+.notification.ng-leave {
     opacity: 1;
 }
 
-.match.ng-leave.ng-leave-active {
-    bottom: 20px;
+.notification.ng-leave.ng-leave-active {
     opacity: 0;
 }
 
@@ -376,7 +398,7 @@ body {
 }
 
 .history__action-action {
-    width: 90px;
+    width: 70px;
     display: flex;
     align-items: center;
 }
@@ -388,26 +410,20 @@ body {
     background: rgba(80, 114, 153, 0.07);
 }
 
-.history__action-index {
-    width: 30px;
-    display: flex;
-    align-items: center;
-}
-
 .history__action-created {
-    width: 180px;
+    width: 160px;
     display: flex;
     align-items: center;
 }
 
 .history__action-name {
-    width: 200px;
+    width: 180px;
     display: flex;
     align-items: center;
 }
 
 .history__action-photos {
-    width: 300px;
+    width: 360px;
     display: flex;
     align-items: center;
 }
@@ -422,11 +438,34 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 140px;
+    width: 200px;
 }
 
 .history__action-actions button {
     margin: 0 0 0 10px;
+}
+
+.history__action-btn {
+    color: white;
+    margin-right: 4px;
+}
+
+.history__action-btn:hover,
+.history__action-btn:active,
+.history__action-btn:focus {
+    color: white;
+}
+
+.history__action-btn-pass {
+    background: #AAAAFF;
+}
+
+.history__action-btn-like {
+    background: orange;
+}
+
+.history__action-btn-superlike {
+    background: red;
 }
 
 .settings__setting-bio {

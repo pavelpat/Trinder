@@ -14,11 +14,12 @@
         /**
          * @param $scope
          * @param $rootScope
+         * @param $timeout
          * @param $window
          * @param {HistoryStore} HistoryStore
          * @param {ActionModel} ActionModel
          */
-        constructor($scope, $rootScope, $window, HistoryStore, ActionModel) {
+        constructor($scope, $rootScope, $timeout, $window, HistoryStore, ActionModel) {
             $scope.$watch('client', (value) => {
                 if (value !== null) {
                     $scope.refresh();
@@ -42,16 +43,33 @@
             $scope.loading = false;
             $scope.matched = false;
 
-            $scope.like = (person) => {
-                let action = 'like';
+            // Notifications.
+            $scope.notification = '';
+
+            $scope.pass = (person) => {
+                let action = 'pass';
                 $scope.react(action, person).then(() => {
                     $scope.history(action, person);
                 });
             };
 
-            $scope.pass = (person) => {
-                let action = 'pass';
-                $scope.react(action, person).then(() => {
+            $scope.like = (person) => {
+                let action = 'like';
+                $scope.react(action, person).then((matched) => {
+                    if (matched) {
+                        alert('Got new match!');
+                    }
+                    $scope.history(action, person);
+                });
+            };
+
+            $scope.superlike = (person) => {
+                let action = 'superlike';
+                $scope.react(action, person).then((result) => {
+                    debugger;
+                    if (result) {
+                        alert('Got new match!');
+                    }
                     $scope.history(action, person);
                 });
             };
@@ -61,10 +79,11 @@
 
                 let reactor = {
                     'like': $scope.client.like,
-                    'pass': $scope.client.pass
+                    'pass': $scope.client.pass,
+                    'superlike': $scope.client.superlike,
                 }[action].bind($scope.client);
 
-                return reactor(person.id).then(() => {
+                return reactor(person.id).then((result) => {
                     let index = $scope.people.indexOf(person);
                     if (index > -1) {
                         $scope.people.splice(index, 1);
@@ -74,10 +93,22 @@
                     }
                     delete $scope.voting[person.id];
                     $scope.$apply();
-                }, () => {
+                    return result;
+                }, (result) => {
                     delete $scope.voting[person.id];
+                    $scope.notify(result.message);
                     $scope.$apply();
+                    throw result;
                 });
+            };
+
+            $scope.notify = (message) => {
+                $scope.notification = message;
+                $timeout(() => {
+                    if ($scope.notification == message) {
+                        $scope.notification = '';
+                    }
+                }, 3000);
             };
 
             $scope.history = (action, person) => {

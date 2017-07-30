@@ -66,7 +66,18 @@
             }
 
             like(id) {
-                return this._get('like/' + id);
+                return this._get('like/' + id).then((response) => {
+                    return !!response['match'];
+                });
+            }
+
+            superlike(id) {
+                return this._post('like/' + id + '/super').then((response) => {
+                    if (response['limit_exceeded']){
+                        throw Error('Superlikes limit exceeded');
+                    }
+                    return !!response['match'];
+                });
             }
 
             recs() {

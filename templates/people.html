@@ -26,8 +26,9 @@
                      ng-if="processed.width == 172">
             </div>
         </div>
-        <button class="btn btn-danger" ng-click="pass(person)">Pass</button>
-        <button class="btn btn-primary" ng-click="like(person)">Like</button>
+        <button class="btn people__person-btn people__person-pass" ng-click="pass(person)">&#x1F44E Pass &#x1F44E</button>
+        <button class="btn people__person-btn people__person-like" ng-click="like(person)">&#x1F44D Like &#x1F44D</button>
+        <button class="btn people__person-btn people__person-superlike" ng-click="superlike(person)">&#x1F31F Super &#x1F31F</button>
     </div>
 </div>
-<div class="match" ng-if="matched">Got new match!</div>
+<div class="notification" ng-if="notification">{{notification}}</div>
