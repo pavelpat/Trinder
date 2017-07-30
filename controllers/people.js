@@ -66,7 +66,6 @@
             $scope.superlike = (person) => {
                 let action = 'superlike';
                 $scope.react(action, person).then((result) => {
-                    debugger;
                     if (result) {
                         alert('Got new match!');
                     }

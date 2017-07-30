@@ -59,6 +59,15 @@
             $scope.voting = {};
             $scope.matched = false;
 
+            $scope.pass = (person) => {
+                let action = 'pass';
+                $scope.react(action, person).then(() => {
+                    $scope.history(action, person).then(() => {
+                        $scope.refresh();
+                    });
+                });
+            };
+
             $scope.like = (person) => {
                 let action = 'like';
                 $scope.react(action, person).then(() => {
@@ -68,8 +77,8 @@
                 });
             };
 
-            $scope.pass = (person) => {
-                let action = 'pass';
+            $scope.superlike = (person) => {
+                let action = 'superlike';
                 $scope.react(action, person).then(() => {
                     $scope.history(action, person).then(() => {
                         $scope.refresh();
@@ -81,8 +90,9 @@
                 $scope.voting[person.id] = true;
 
                 let reactor = {
+                    'pass': $scope.client.pass,
                     'like': $scope.client.like,
-                    'pass': $scope.client.pass
+                    'superlike': $scope.client.superlike
                 }[action].bind($scope.client);
 
                 let endVoting = () => {

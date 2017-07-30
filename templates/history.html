@@ -31,11 +31,11 @@
         </div>
         <div class="history__action-actions">
             <a class="btn history__action-btn history__action-btn-pass" href="#{{action.person.id}}"
-               ng-click="like(action.person)" ng-disabled="!action.person.id">&#x1F44E Pass</a>
+               ng-click="pass(action.person)" ng-disabled="!action.person.id">&#x1F44E Pass</a>
             <a class="btn history__action-btn history__action-btn-like" href="#{{action.person.id}}"
-               ng-click="pass(action.person)" ng-disabled="!action.person.id">&#x1F44D Like</a>
+               ng-click="like(action.person)" ng-disabled="!action.person.id">&#x1F44D Like</a>
             <a class="btn history__action-btn history__action-btn-superlike" href="#{{action.person.id}}"
-               ng-click="like(action.person)" ng-disabled="!action.person.id">&#x1F31F Super</a>
+               ng-click="superlike(action.person)" ng-disabled="!action.person.id">&#x1F31F Super</a>
         </div>
     </div>
 </div>
