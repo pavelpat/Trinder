@@ -63,9 +63,14 @@
                     // Fixes bug with incorrect position of slider on page load.
                     // When page loads first time slider stay in incorrect position
                     // while model value is set properly. Set new (different) value
-                    // in current session and set correct value in timeout session.
-                    $scope.location.slider.value = user.distance - 1;
-                    $timeout(() => {$scope.location.slider.value = user.distance;}, 0);
+                    // in current session and set correct value in timeout sessions.
+                    $scope.location.slider.value = user.distance + 2;
+                    $timeout(() => {
+                        $scope.location.slider.value = user.distance + 1;
+                        $timeout(() => {
+                            $scope.location.slider.value = user.distance;
+                        }, 0);
+                    }, 0);
                 }
             });
 
