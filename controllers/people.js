@@ -57,7 +57,7 @@
                 let action = 'like';
                 $scope.react(action, person).then((matched) => {
                     if (matched) {
-                        alert('Got new match!');
+                        $scope.notify('Got new match!');
                     }
                     $scope.history(action, person);
                 });
@@ -67,7 +67,7 @@
                 let action = 'superlike';
                 $scope.react(action, person).then((result) => {
                     if (result) {
-                        alert('Got new match!');
+                        $scope.notify('Got new match!');
                     }
                     $scope.history(action, person);
                 });
