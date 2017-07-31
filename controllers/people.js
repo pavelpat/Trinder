@@ -84,7 +84,11 @@
                     'superlike': $scope.client.superlike,
                 }[action].bind($scope.client);
 
-                return reactor(person.id).then((result) => {
+                // Strange bug with cancelled requests.
+                // When this code called via button click, request sent will be cancelled.
+                // But if we delay the request for >= 37msec it will be successfully sent.
+                // I think, that problem is in engular $eval + strange bug in Chrome.
+                return $timeout(() => reactor(person.id), 100).then((result) => {
                     let index = $scope.people.indexOf(person);
                     if (index > -1) {
                         $scope.people.splice(index, 1);
@@ -93,12 +97,10 @@
                         }
                     }
                     delete $scope.voting[person.id];
-                    $scope.$apply();
                     return result;
                 }, (result) => {
                     delete $scope.voting[person.id];
                     $scope.notify(result.message);
-                    $scope.$apply();
                     throw result;
                 });
             };

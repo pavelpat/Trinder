@@ -110,10 +110,7 @@
                     $.ajax({
                         url: this.apiUrl + path,
                         type: 'get',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Auth-Token': this.authToken
-                        }
+                        headers: headers
                     }).success((r) => {
                         resolve(r);
                     }).error((e) => {

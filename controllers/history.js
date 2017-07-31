@@ -50,10 +50,11 @@
     App.controller('HistoryController', class HistoryController {
         /**
          * @param $scope
+         * @param $timeout
          * @param {HistoryStore} HistoryStore
          * @param {ActionModel} ActionModel
          */
-        constructor($scope, HistoryStore, ActionModel) {
+        constructor($scope, $timeout, HistoryStore, ActionModel) {
             $scope.actions = [];
             $scope.loading = false;
             $scope.voting = {};
@@ -97,10 +98,13 @@
 
                 let endVoting = () => {
                     delete $scope.voting[person.id];
-                    $scope.$apply();
                 };
 
-                return reactor(person.id).then(endVoting, endVoting);
+                // Strange bug with cancelled requests.
+                // When this code called via button click, request sent will be cancelled.
+                // But if we delay the request for >= 37msec it will be successfully sent.
+                // I think, that problem is in engular $eval + strange bug in Chrome.
+                return $timeout(() => reactor(person.id), 100).then(endVoting, endVoting);
             };
 
             $scope.history = (action, person) => {
