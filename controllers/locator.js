@@ -131,12 +131,9 @@
                         limit: limit
                     });
                 })).then((distance) => {
-                    // Distance is rounded value in miles.
-                    return {
-                        lat: distance.lat,
-                        lng: distance.lng,
-                        distance: Math.min(distance.rivals[0], distance.rivals[1]) * 1000 * 1.60934
-                    };
+                    lat: distance.lat,
+                    lng: distance.lng,
+                    distance: Math.min(distance.rivals[0], distance.rivals[1])
                 });
             }
 
