@@ -131,9 +131,11 @@
                         limit: limit
                     });
                 })).then((distance) => {
-                    lat: distance.lat,
-                    lng: distance.lng,
-                    distance: Math.min(distance.rivals[0], distance.rivals[1])
+                    return {
+                        lat: distance.lat,
+                        lng: distance.lng,
+                        distance: Math.min(distance.rivals[0], distance.rivals[1])
+                    };
                 });
             }
 
