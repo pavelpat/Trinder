@@ -67,6 +67,10 @@
 
             like(id) {
                 return this._get('like/' + id).then((response) => {
+                    if (response['rate_limited_until']) {
+                        let date = new Date(response['rate_limited_until']);
+                        throw Error('No more likes until ' + date.toLocaleString());
+                    }
                     return response['match'] === true;
                 });
             }
