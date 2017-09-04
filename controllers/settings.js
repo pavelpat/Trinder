@@ -38,6 +38,13 @@
         set settings(value) {
             this.store.set('settings', value.toObject());
         }
+
+        /**
+         * @returns {Promise}
+         */
+        clear() {
+            return this.store.remove('settings');
+        }
     });
 
     App.controller('SettingsController', class SettingsController {
@@ -47,9 +54,9 @@
          * @param $timeout
          * @param Geo
          * @param SettingsStore
-         * @param Store
+         * @param MatchesStore
          */
-        constructor($scope, $window, $timeout, Geo, SettingsStore, Store) {
+        constructor($scope, $window, $timeout, Geo, SettingsStore, MatchesStore) {
             $scope.settings = null;
             SettingsStore.settings.then((settings) => {
                 $scope.settings = settings;
@@ -178,9 +185,16 @@
                 });
             };
 
-            // Clear storage.
-            $scope.clear = () => {
-                Store.clear().then(() => {
+            // Clear all storage.
+            $scope.clearCache = () => {
+                MatchesStore.clear().then(() => {
+                    $window.location.reload();
+                });
+            };
+
+            // Clear all storage.
+            $scope.clearSettings = () => {
+                SettingsStore.clear().then(() => {
                     $window.location.reload();
                 });
             };

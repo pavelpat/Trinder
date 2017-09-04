@@ -54,6 +54,16 @@
         set matches(value) {
             this.store.set('matches', value.map((v) => v.toObject()));
         }
+
+        /**
+         * @returns {Promise}
+         */
+        clear() {
+            return Promise.all([
+                this.store.remove('matches'),
+                this.store.remove('activity')
+            ]);
+        }
     });
 
     App.controller('MatchesController', class MatchesController {
