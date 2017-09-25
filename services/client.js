@@ -99,7 +99,14 @@
             updates(since) {
                 return this._post('updates', {
                     'last_activity_date': since.toISOString()
-                }).then((result) => new UpdateModel(result));
+                }).then((result) => {
+                    if (result.matches) {
+                        var present = (item) => !!item.person;
+                        result.matches = result.matches.filter(present);
+                    }
+
+                    return new UpdateModel(result);
+                });
             }
 
             _get(path) {
