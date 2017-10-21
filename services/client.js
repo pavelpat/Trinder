@@ -99,6 +99,8 @@
             updates(since) {
                 return this._post('updates', {
                     'last_activity_date': since.toISOString()
+                }, {
+                    'Platform': 'web'
                 }).then((result) => {
                     if (result.matches) {
                         var present = (item) => !!item.person;
@@ -109,12 +111,17 @@
                 });
             }
 
-            _get(path) {
+            _get(path, extra_headers) {
                 let headers = {
                     'Content-Type': 'application/json'
                 };
                 if (this.authToken) {
                     headers['X-Auth-Token'] = this.authToken;
+                }
+                if (extra_headers) for (let key in extra_headers) {
+                    if (extra_headers.hasOwnProperty(key)) {
+                        headers[key] = extra_headers[key];
+                    }
                 }
 
                 return new Promise((resolve, reject) => {
@@ -135,12 +142,17 @@
                 });
             }
 
-            _post(path, data) {
+            _post(path, data, extra_headers) {
                 let headers = {
                     'Content-Type': 'application/json'
                 };
                 if (this.authToken) {
                     headers['X-Auth-Token'] = this.authToken;
+                }
+                if (extra_headers) for (let key in extra_headers) {
+                    if (extra_headers.hasOwnProperty(key)) {
+                        headers[key] = extra_headers[key];
+                    }
                 }
 
                 return new Promise((resolve, reject) => {
