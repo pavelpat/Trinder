@@ -2,8 +2,9 @@
 
 let redirectUri = 'fbconnect://success',
     scopes = ['basic_info', 'email', 'public_profile', 'user_about_me', 'user_activities', 'user_birthday', 'user_education_history', 'user_friends', 'user_interests', 'user_likes', 'user_location', 'user_photos', 'user_relationship_details'],
-    oauthUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&redirect_uri=' + redirectUri + '&scope=' + scopes.join(',') + '&response_type=token',
-    oauthWildcard = 'https://www.facebook.com/dialog/oauth*';
+    oauthPageUrl = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&redirect_uri=' + redirectUri + '&scope=' + scopes.join(',') + '&response_type=token',
+    oauthPageUrlContains = '/dialog/oauth',
+    oauthFormActionContains = '/oauth/confirm';
 
 chrome.runtime.onMessage.addListener(acceptRequest);
 chrome.runtime.onMessageExternal.addListener(acceptToken);
@@ -13,48 +14,63 @@ function acceptRequest(message) {
         return;
     }
 
-    // Listen for oauth urls.
-    chrome.webRequest.onBeforeRequest.addListener(injectInterceptor, {
-        urls: [oauthWildcard]
-    }, ['blocking']);
+    chrome.tabs.onUpdated.addListener(function (tabId, info) {
+        if (info.status === 'complete') {
+            chrome.tabs.get(tabId, function(tab){
+                if (tab.url.indexOf(oauthPageUrlContains) != -1) {
+                    injectInterceptor(tab);
+                }
+            });
+        }
+    });
 
     // Begin oauth process.
-    chrome.tabs.create({url: oauthUrl});
+    chrome.tabs.create({
+        'url': oauthPageUrl,
+    });
 }
 
-function injectInterceptor(info) {
-    // Remove self.
-    chrome.webRequest.onBeforeRequest.removeListener(injectInterceptor);
-
-    // Create interceptor.
+function injectInterceptor(tab) {    
+    // This code will be injected to page which tries to submit oauth form ('Ok' click).
+    // Intercepting form submit request looks simpler than hack facebook form submitting.
+    // Because we dont need await page and form load, just intercept 'Ok' click effect =).
     let code = (
-        '\\\'use strict\\\';' +
-        'requireLazy([\\\'AsyncRequest\\\'], (AsyncRequest) => {' +
-        '    \\\'use strict\\\';' +
-        '    AsyncRequest.prototype._handleJSResponseOrig = AsyncRequest.prototype._handleJSResponse;' +
-        '    AsyncRequest.prototype._handleJSResponse = function(value) {' +
-        '        if (value.jsmods && value.jsmods.require && value.jsmods.require.length) {' +
-        '            let event = value.jsmods.require[0];' +
-        '            if (event[0] == \\\'ServerRedirect\\\' && event[1] == \\\'redirectPageTo\\\') {' +
-        '                chrome.runtime.sendMessage(\\\'' + chrome.runtime.id + '\\\', {' +
-        '                    type: \\\'token\\\',' +
-        '                    url: event[3][0]' +
+        '\'use strict\';' + 
+        '/* Poll facebook page to find the form. */' +
+        'let watcher = window.setInterval(function() {' +
+        '    let query = \'form[action*="' + oauthFormActionContains + '"]\';' +
+        '    let form = document.querySelector(query);' +
+        '    if (form) {' +
+        '        /* Form found. Stop polling page. */' +
+        '        window.clearInterval(watcher);' +
+        '        form.addEventListener(\'submit\', function(event){' +
+        '            /* Form submitted. Cancel it. */' +
+        '            event.preventDefault();' +
+        '            /* Submit cancelled. Send data via ajax. */' +
+        '            fetch(form.action, {' +
+        '                method: \'POST\',' +
+        '                body: new URLSearchParams(new FormData(form))' +
+        '            }).then(function(result){' +
+        '                return result.text();' +
+        '            }).then(function(text){' +
+        '                chrome.runtime.sendMessage(\'' + chrome.runtime.id + '\', {' +
+        '                    type: \'token\',' +
+        '                    url: text' +
         '                });' +
-        '            }' +
-        '        }' +
-        '        return AsyncRequest.prototype._handleJSResponseOrig.call(this, value);' +
-        '    };' +
-        '});'
+        '            });' +
+        '        });' +
+        '    }' +
+        '}, 100);'
     );
 
-    // Inject interceptor.
-    chrome.tabs.executeScript(info.tabId, {
+    // Inject submit handler to Facebool page.
+    chrome.tabs.executeScript(tab.id, {
         code: (
             '\'use strict\';' +
-            'let element = window.document.createElement(\'script\');' +
-            'element.async = true;' +
-            'element.innerHTML = \'' + code + '\';' +
-            'window.document.head.appendChild(element);'
+            'let trinderElement = window.document.createElement(\'script\');' +
+            'trinderElement.async = true;' +
+            'trinderElement.innerHTML = \'' + code.split('\'').join('\\\'') + '\';' +
+            'window.document.head.appendChild(trinderElement);'
         )
     });
 }
@@ -71,25 +87,27 @@ function acceptToken(data) {
     });
 
     // Close opened tabs.
-    closeAuthTabs(oauthWildcard);
+    closeAuthTabs(oauthPageUrlContains);
 }
 
 function extractToken(url) {
-    let regexp = new RegExp('access_token=(.*)&expires_in=(.*)'),
-        matches = url.match(regexp);
+    let tokenRe = new RegExp('access_token=(.*?)[&$]'),
+        expiresRe = new RegExp('expires_in=(.*?)[&$]'),
+        tokenMatches = url.match(tokenRe),
+        expiresMatches = url.match(expiresRe);
     return {
-        token: matches[1],
-        expires: matches[2] * 1
+        token: tokenMatches[1],
+        expires: expiresMatches[1] * 1
     };
 }
 
 function closeAuthTabs(url) {
-    chrome.tabs.query({
-        url: url
-    }, function (tabs) {
+    chrome.tabs.query({}, function(tabs) {
         tabs.forEach(function (tab) {
-            chrome.tabs.remove(tab.id);
-        });
+            if (tab.url.indexOf(url) !== -1) {
+                chrome.tabs.remove(tab.id);
+            }
+        });    
     });
 }
 
