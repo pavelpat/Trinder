@@ -3,9 +3,11 @@
 
     App.value('Geo', new class Geo {
         position() {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition((geo) => {
                     resolve([geo.coords.latitude, geo.coords.longitude]);
+                }, (reason) => {
+                    reject({code: reason.code, message: reason.message});
                 });
             });
         }

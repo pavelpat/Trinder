@@ -1,4 +1,9 @@
 <div class="layout__loader-over" ng-show="!client"></div>
+<div class="layout__block" ng-show="client && !located">
+    Trinder could not detect your location. <br>
+    Without it Trinder coult not setup your position to load persons beside you. <br>
+    Please grant access to location service or setup your position at <a href="href="#" ui-sref="settings">settings page</a>.
+</div>
 <ng-photoswipe open="gallery.shown" on-close="gallery.close()"
     slides="gallery.slides" options="gallery.options"
     template="bower_components/ng-photoswipe/views/ng-photoswipe.html"></ng-photoswipe>

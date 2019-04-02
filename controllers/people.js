@@ -21,7 +21,7 @@
          */
         constructor($scope, $rootScope, $timeout, $window, HistoryStore, ActionModel) {
             $scope.$watch('client', (value) => {
-                if (value !== null) {
+                if (value !== null && $scope.located) {
                     $scope.refresh();
                 }
             });
