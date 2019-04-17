@@ -1,8 +1,19 @@
 <div class="layout__loader-over" ng-show="!client"></div>
-<div class="layout__block" ng-show="client && !located">
+<div class="layout__block" ng-show="located === false">
     Trinder could not detect your location. <br>
     Without it Trinder coult not setup your position to load persons beside you. <br>
     Please grant access to location service or setup your position at <a href="href="#" ui-sref="settings">settings page</a>.
+</div>
+<div class="layout__block" ng-show="validated === false">
+    Trinder respond that your phone number is not submitted. <br>
+    Enter your phone number (without &laquo;+&raquo;) and press &laquo;Submit phone&raquo;.<br><br>
+    <input id="phone">
+    <button ng-click="smsSend($event)">Submit phone</button>
+
+    <br><br><br>
+    Next enter received code and press &laquo;Submit code&raquo;.<br><br>
+    <input id="code">
+    <button ng-click="smsValidate($event)">Submit code</button>
 </div>
 <ng-photoswipe open="gallery.shown" on-close="gallery.close()"
     slides="gallery.slides" options="gallery.options"

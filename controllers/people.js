@@ -20,8 +20,8 @@
          * @param {ActionModel} ActionModel
          */
         constructor($scope, $rootScope, $timeout, $window, HistoryStore, ActionModel) {
-            $scope.$watch('client', (value) => {
-                if (value !== null && $scope.located) {
+            $scope.$watch('loaded', (value) => {
+                if (value) {
                     $scope.refresh();
                 }
             });

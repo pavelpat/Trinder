@@ -19,8 +19,8 @@
             $scope.loading = true;
             $scope.person = null;
 
-            $scope.$watch('client', (value) => {
-                if (value !== null) {
+            $scope.$watch('loaded', (value) => {
+                if (value) {
                     $scope.load($stateParams.personId);
                 }
             });

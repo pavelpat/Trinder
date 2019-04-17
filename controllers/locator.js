@@ -81,8 +81,8 @@
                 });
             };
 
-            $scope.$watch('client', (value) => {
-                if (value !== null) {
+            $scope.$watch('loaded', (value) => {
+                if (value) {
                     $scope.detect($stateParams.personId);
                 }
             });
