@@ -7,38 +7,59 @@
                 this.store = new Store('Auth');
             }
             
-            auth() {
-                return this._cached().catch(
-                    this._authorize.bind(this)
-                ).then(
-                    this._credentials.bind(this)
-                )
+            /**
+             * Authorizes in facebook and returns fb auth token.
+             * @return {Promise<string>}
+             * @throws {Error}
+             */
+            async auth() {
+                let token = null;
+    
+                try {
+                    token = await this._cached();
+                } catch (e) {
+                    token = await this._authorize();
+                }
+
+                return await this._credentials(token);
             }
 
-            _cached() {
-                return this.store.get('token').then((token) => {
-                    if (token && token.expiresAt > Date.now()) {
-                        return token.token;
-                    } else {
-                        this.store.remove('token');
-                        throw new Error('Token miss or expired');
-                    }
+            /**
+             * @return {Promise<string>}
+             * @throws {Error}
+             */
+            async _cached() {
+                let token = await this.store.get('token');
+
+                if (!token || token.expiresAt <= Date.now()) {
+                    await this.store.remove('token');
+                    throw new Error('Token miss or expired');
+                }
+
+                return token.token;
+            }
+            
+            /**
+             * @return {Promise<string>}
+             */
+            async _authorize() {
+                let bgWorkerData = await Echo(null);
+
+                await this.store.set('token', {
+                    expiresAt: bgWorkerData.expires * 1000 + Date.now(),
+                    token: bgWorkerData.token
                 });
+
+                return bgWorkerData.token;
             }
-
-            _authorize() {
-                return Echo(null).then((data) => {
-                    this.store.set('token', {
-                        expiresAt: data.expires * 1000 + Date.now(),
-                        token: data.token
-                    });
-
-                    return data.token;
-                });
-            }
-
-            _credentials(token) {
-                return new Promise((resolve, reject) => {
+            
+            /**
+             * @param {string} token
+             * @return {Promise<object>}
+             * @throws {Error}
+             */
+            async _credentials(token) {
+                let credentials = await new Promise((resolve, reject) => {
                     $.ajax('https://graph.facebook.com/v2.5/me', {
                         data: {
                             'access_token': token
@@ -50,12 +71,18 @@
                     }).then((response) => {
                         resolve({
                             id: response.id,
-                            token: token
+                            name: response.name
                         });
                     }, () => {
-                        reject('Could not get profile info');
+                        reject('Could not access Facebook profile info');
                     });
                 });
+
+                return {
+                    id: credentials.id,
+                    name: credentials.name,
+                    token: token
+                }
             }
         }();
     });

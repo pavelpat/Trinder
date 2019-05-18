@@ -1,72 +1,94 @@
 ((App, window) => {
     'use strict';
 
-    App.run(function($rootScope, Auth, Client, Geo, SettingsStore) {
-        $rootScope.client = null;
-        $rootScope.user = null;
-        $rootScope.located = null;
+    App.run(function($rootScope, SettingsStore, Auth, Client, Geo, ) {
+        /**
+         * Bootstraps application with a few steps.
+         */
+        async function bootstrap() {
+            // Set initial Angular state.
+            $rootScope.client = null;
+            $rootScope.user = null;
+            $rootScope.loaded = null;
+            $rootScope.located = true;
+            $rootScope.validated = true;
 
-        Auth.auth().then((credentials) => new Promise((resolve, reject) => {
-            let client = new Client(credentials.id, credentials.token);
-            client.auth().then((user) => {
-                // Export client for DevTools debug.
-                window.client = client;
-                resolve([client, user]);
-            }, (e) => {
-                reject('Could not authenticate: ' + e)
-            });
-        })).then((args) => {
-            let client = args[0],
-                user = args[1];
+            // Get application settings object.
+            let settings = await SettingsStore.settings;
 
-            return new Promise((resolve) => {
-                geolocation(client).then(() => {
-                    // Current geo location sent.
-                    resolve([client, user, true]);
-                }, (reason) => {
-                    // Current geo location not sent, but this must not breaks page load.
-                    // If location not sent we must show warning popup to user.
-                    console.warn('Could not set initial position: ' + reason.message);
+            // Get Facebook auth token from popup or cache.
+            let fbauth = await Auth.auth();
 
-                    resolve([client, user, false]);
-                });
-            });
-        }).then((args) => {
-            let client = args[0],
-                user = args[1],
-                located = args[2];
+            // Create Tinder API client and authenticate it.
+            let client = new Client(fbauth.id, fbauth.token);
+            let clauth = await client.auth();
+            client.setauth(clauth);
+            
+            // Enable client-dependent interface.
             $rootScope.client = client;
-            $rootScope.user = user;
-            $rootScope.located = located;
             $rootScope.$apply();
-        });
 
-        function geolocation(client) {
-            /**
-             * Detects your current location or pickups it from settings.
-             * Sends your current location to the tinder api.
-             */
-            return new Promise((resolve, reject) => {
-                SettingsStore.settings.then((settings) => {
-                    if (settings.geolocation) {
-                        // Browser selected location.
-                        Geo.position().then((args) => {
-                            let geolat = args[0],
-                                geolon = args[1];
-                            client.ping(geolat, geolon).then(() => {
-                                resolve();
-                            });
-                        }, (reason) => {
-                            reject(reason);
-                        });
-                    } else if (settings.geolat && settings.geolon) {
-                        // User selected location.
-                        client.ping(settings.geolat, settings.geolon).then(() => {
+            // Need to submit user phone number.
+            if (!clauth.phoneValidated) {
+                // Phone not validated. Show validate form.
+                $rootScope.validated = false;
+                $rootScope.$apply();
+
+                await new Promise((resolve) => {
+                    $rootScope.smsSend = (event) => {
+                        let parent = event.target.parentElement;
+                        let phoneInput = parent.querySelector('#phone');
+                        client.smsSend(phoneInput.value);
+                    }
+                    $rootScope.smsValidate = (event) => {
+                        let parent = event.target.parentElement;
+                        let phoneInput = parent.querySelector('#phone');
+                        let codeInput = parent.querySelector('#code');
+                        client.smsValidate(phoneInput.value, codeInput.value).then(() => {
                             resolve();
                         });
-                    }
+                    }    
                 });
-            });
+
+                // Phone validated now. Hide validate form.
+                $rootScope.validated = true;
+                $rootScope.$apply();
+            }
+
+            // Load current user profile.
+            let user = await client.profile();
+            $rootScope.user = user;
+            $rootScope.$apply();
+
+            // Send GEO location from settings or location services.
+            let location = null;
+            if (settings.geolocation) {
+                try {
+                    location = await Geo.position();
+                } catch (e) {
+                    // Can be rejected by user.
+                }
+            } else if (settings.geolat && settings.geolon) {
+                location = [settings.geolat, settings.geolon];
+            }
+
+            if (location) {
+                await client.ping(location[0], location[1]);
+            } else {
+                // Need to reload page when location settings changes.
+                $rootScope.located = false;
+                $rootScope.$apply();
+            }
+
+            // Export client for DevTools debug.
+            window.client = client;
+
+            // Set ready state if all prerequirements passed.
+            $rootScope.loaded = $rootScope.validated && $rootScope.located;
+            $rootScope.$apply();
         }
+
+        // Good luck!
+        bootstrap().catch((e) => console.error(e));
     });
 })(App, window);
